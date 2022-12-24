@@ -4,7 +4,6 @@ use actix_web::{
     web::{Data, Json, Path},
     HttpResponse,
 };
-use mongodb::bson::oid::ObjectId;
 
 #[post("/users")]
 pub async fn create_user(db: Data<MongoRepo>, new_user: Json<User>) -> HttpResponse {
@@ -45,7 +44,7 @@ pub async fn update_user(
         return HttpResponse::BadRequest().body("invalid ID");
     };
     let data = User {
-        id: Some(ObjectId::parse_str(&id).unwrap()),
+        id: Some(String::from(&id)),
         name: new_user.name.to_owned(),
         location: new_user.location.to_owned(),
         title: new_user.title.to_owned(),
@@ -82,6 +81,15 @@ pub async fn delete_user(db: Data<MongoRepo>, path: Path<String>) -> HttpRespons
                 return HttpResponse::NotFound().body("User with specified ID not found!");
             }
         }
+        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+    }
+}
+
+#[get("/users")]
+pub async fn get_all_users(db: Data<MongoRepo>) -> HttpResponse {
+    let users = db.get_all_users().await;
+    match users {
+        Ok(users) => HttpResponse::Ok().json(users),
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
     }
 }
