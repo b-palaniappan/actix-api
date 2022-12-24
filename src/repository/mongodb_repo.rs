@@ -3,8 +3,8 @@ extern crate dotenv;
 use dotenv::dotenv;
 
 use mongodb::{
-    bson::{extjson::de::Error},
-    results::{ InsertOneResult},
+    bson::{extjson::de::Error, oid::ObjectId, doc},
+    results::{InsertOneResult, UpdateResult},
     Client, Collection,
 };
 use crate::models::user_model::User;
@@ -41,4 +41,38 @@ impl MongoRepo {
             .expect("Error creating user");
         Ok(user)
     }
+
+    pub async fn get_user(&self, id: &String) -> Result<User, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let user_detail = self
+            .col
+            .find_one(filter, None)
+            .await
+            .ok()
+            .expect("Error getting user's detail");
+        Ok(user_detail.unwrap())
+    }
+
+    pub async fn update_user(&self, id: &String, new_user: User) -> Result<UpdateResult, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let new_doc = doc! {
+            "$set":
+                {
+                    "_id": new_user.id,
+                    "name": new_user.name,
+                    "location": new_user.location,
+                    "title": new_user.title
+                },
+        };
+        let updated_doc = self
+            .col
+            .update_one(filter, new_doc, None)
+            .await
+            .ok()
+            .expect("Error updating user");
+        Ok(updated_doc)
+    }
+    
 }
