@@ -1,6 +1,4 @@
 use std::env;
-extern crate dotenv;
-use dotenv::dotenv;
 use futures::stream::TryStreamExt;
 use nanoid::nanoid;
 
@@ -19,7 +17,6 @@ impl MongoRepo {
     // MongoDB initialize function.
     // Get DB connection url from environment file and connect.
     pub async fn init() -> Self {
-        dotenv().ok();
         let uri = match env::var("MONGOURI") {
             Ok(v) => v.to_string(),
             Err(_) => format!("Error loading env variable"),
