@@ -1,0 +1,41 @@
+2022-12-26T14:43:31.670810-06:00 - Initializing application...
+2022-12-26T14:43:31.725152-06:00 - Starting actix-web server in 127.0.0.1:8080
+2022-12-26T14:43:31.725783-06:00 - Starting 10 workers
+2022-12-26T14:43:31.725880-06:00 - Actix runtime found; starting in Actix runtime
+2022-12-26T14:44:45.412134-06:00 - SIGTERM received; starting graceful shutdown
+2022-12-26T14:44:50.789884-06:00 INFO actix_api - Initializing application...
+2022-12-26T14:44:50.839582-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
+2022-12-26T14:44:50.840260-06:00 INFO actix_server::builder - Starting 10 workers
+2022-12-26T14:44:50.840365-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime
+2022-12-26T14:45:08.160781-06:00 WARN actix_api::api::user_api - User with id -H2XG2A7ZMzfdZUOveDrQN not found.
+2022-12-26T14:45:10.941614-06:00 WARN actix_api::api::user_api - User with id -H2XG2A7ZMzfdZUOveDrQN not found.
+2022-12-26T14:45:38.415242-06:00 INFO actix_api - Initializing application...
+2022-12-26T14:45:38.464428-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
+2022-12-26T14:45:38.465044-06:00 INFO actix_server::builder - Starting 10 workers
+2022-12-26T14:45:38.465148-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime
+2022-12-26T14:46:43.592754-06:00 INFO actix_server::server - SIGTERM received; starting graceful shutdown
+2022-12-26T14:46:50.838594-06:00 INFO actix_api - Initializing application...
+2022-12-26T14:46:50.869914-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
+2022-12-26T14:46:50.870529-06:00 INFO actix_server::builder - Starting 10 workers
+2022-12-26T14:46:50.870620-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime
+2022-12-26T14:47:39.153298-06:00 WARN actix_api::api::user_api - User with id -H2XG2A7ZMzfdZUOveDrQN not found for delete user by ID
+2022-12-26T14:47:46.484498-06:00 WARN actix_api::api::user_api - User with id -H2XG2A7ZMzfdZUOveDrQN not found update user by ID
+2022-12-26T14:51:14.847455-06:00 INFO actix_server::server - SIGTERM received; starting graceful shutdown
+2022-12-26T14:53:07.008580-06:00 INFO actix_api - Initializing application...
+2022-12-26T14:53:07.046510-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
+2022-12-26T14:53:07.047145-06:00 INFO actix_server::builder - Starting 10 workers
+2022-12-26T14:53:07.047241-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime
+2022-12-26T14:55:20.952235-06:00 INFO actix_server::server - SIGTERM received; starting graceful shutdown
+2022-12-26T14:55:56.065264-06:00 INFO actix_api - Initializing application...
+2022-12-26T14:55:56.132887-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
+2022-12-26T14:55:56.133599-06:00 INFO actix_server::builder - Starting 10 workers
+2022-12-26T14:55:56.133715-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime
+2022-12-26T15:00:54.100084-06:00 INFO actix_api - Initializing application...
+2022-12-26T15:00:54.162928-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
+2022-12-26T15:00:54.163634-06:00 INFO actix_server::builder - Starting 10 workers
+2022-12-26T15:00:54.163767-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime
+2022-12-26T15:04:18.661656-06:00 INFO actix_server::server - SIGTERM received; starting graceful shutdown
+2022-12-26T15:06:28.045269-06:00 INFO actix_api - Initializing application...
+2022-12-26T15:06:28.089252-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
+2022-12-26T15:06:28.089939-06:00 INFO actix_server::builder - Starting 10 workers
+2022-12-26T15:06:28.090046-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime

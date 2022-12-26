@@ -17,7 +17,7 @@ impl MongoRepo {
     // MongoDB initialize function.
     // Get DB connection url from environment file and connect.
     pub async fn init() -> Self {
-        let uri = match env::var("MONGOURI") {
+        let uri = match env::var("MONGO.URI") {
             Ok(v) => v.to_string(),
             Err(_) => format!("Error loading env variable"),
         };
@@ -44,6 +44,7 @@ impl MongoRepo {
         Ok(user)
     }
 
+    // Get a user by given id from MongoDB database
     pub async fn get_user(&self, id: &String) -> Result<User, Error> {
         let obj_id = String::from(id);
         let filter = doc! {"_id": obj_id};

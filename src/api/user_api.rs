@@ -4,9 +4,12 @@ use actix_web::{
     web::{Data, Json, Path},
     HttpResponse,
 };
+use log::info;
+use log::warn;
 
 #[post("/users")]
 pub async fn create_user(db: Data<MongoRepo>, new_user: Json<User>) -> HttpResponse {
+    info!("creating a new user with name - {}", new_user.name);
     let data = User {
         id: None,
         name: new_user.name.to_owned(),
@@ -24,6 +27,7 @@ pub async fn create_user(db: Data<MongoRepo>, new_user: Json<User>) -> HttpRespo
 pub async fn get_user(db: Data<MongoRepo>, path: Path<String>) -> HttpResponse {
     let id = path.into_inner();
     if id.is_empty() {
+        warn!("User with id -{} not found for get user by ID", id);
         return HttpResponse::BadRequest().body("invalid ID");
     }
     let user_detail = db.get_user(&id).await;
@@ -59,6 +63,7 @@ pub async fn update_user(
                     Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
                 };
             } else {
+                warn!("User with id -{} not found update user by ID", id);
                 return HttpResponse::NotFound().body("No user found with specified ID");
             }
         }
@@ -78,6 +83,7 @@ pub async fn delete_user(db: Data<MongoRepo>, path: Path<String>) -> HttpRespons
             if res.deleted_count == 1 {
                 return HttpResponse::NoContent().finish();
             } else {
+                warn!("User with id -{} not found for delete user by ID", id);
                 return HttpResponse::NotFound().body("User with specified ID not found!");
             }
         }
