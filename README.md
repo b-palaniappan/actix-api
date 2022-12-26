@@ -1,2 +1,35 @@
 # actix-api
 Rust Actix REST API application with MongoDB
+
+### Todo
+- [x] Basic CRUD calls using MongoDB.
+- [x] Environment Config.
+- [x] Logging.
+- [ ] Add JSON validator.
+- [ ] Add security may be JWT.
+- [ ] Add role based JWT.
+- [ ] Global and Local api Error Handling.
+- [ ] Form bean and Entity bean mapping.
+- [ ] Add Unit testing.
+- [ ] Add integration testing.
+- [ ] Docker build... with minimal base image.
+- [ ] Redis cache.
+
+### Random Notes.
+#### Api Error response structure.
+```json
+{
+  "status": 404,
+  "timestamp": "2022-12-25T15:25:35.089z",
+  "message": "User not found for id - 2893f9283uo2",
+  "debugMessage": "User not found for id - 2893f9283uo2",
+  "subErrors": [
+    {
+      "object": "users",
+      "field": "email",
+      "rejectedValue": "dummyEmailgmail.com",
+      "message": "invalid email address"
+    }
+  ]
+}
+```
