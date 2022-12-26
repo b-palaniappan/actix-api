@@ -1,14 +1,9 @@
-2022-12-26T15:30:03.518813-06:00 INFO actix_api - Initializing application...
-2022-12-26T15:30:03.603136-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
-2022-12-26T15:30:03.604959-06:00 INFO actix_server::builder - Starting 10 workers
-2022-12-26T15:30:03.605171-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime
-2022-12-26T15:30:04.026077-06:00 INFO actix_server::server - SIGTERM received; starting graceful shutdown
-2022-12-26T15:30:06.688533-06:00 INFO actix_api - Initializing application...
-2022-12-26T15:30:06.754114-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
-2022-12-26T15:30:06.755235-06:00 INFO actix_server::builder - Starting 10 workers
-2022-12-26T15:30:06.755426-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime
-2022-12-26T15:31:05.350620-06:00 INFO actix_server::server - SIGTERM received; starting graceful shutdown
-2022-12-26T15:31:10.624424-06:00 INFO actix_api - Initializing application...
-2022-12-26T15:31:10.680504-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
-2022-12-26T15:31:10.681587-06:00 INFO actix_server::builder - Starting 10 workers
-2022-12-26T15:31:10.681752-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime
+2022-12-26T15:32:02.125214-06:00 INFO actix_api - Initializing application...
+2022-12-26T15:32:02.213098-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
+2022-12-26T15:32:02.214391-06:00 INFO actix_server::builder - Starting 10 workers
+2022-12-26T15:32:02.214594-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime
+2022-12-26T15:32:02.637519-06:00 INFO actix_server::server - SIGTERM received; starting graceful shutdown
+2022-12-26T15:32:04.890815-06:00 INFO actix_api - Initializing application...
+2022-12-26T15:32:04.945490-06:00 INFO actix_api - Starting actix-web server in 127.0.0.1:8080
+2022-12-26T15:32:04.946586-06:00 INFO actix_server::builder - Starting 10 workers
+2022-12-26T15:32:04.946783-06:00 INFO actix_server::server - Actix runtime found; starting in Actix runtime
