@@ -5,6 +5,11 @@ use serde::{Serialize, Deserialize};
 use nanoid::nanoid;
 use chrono::Utc;
 
+pub fn init(cfg: &mut web::ServiceConfig) {
+  cfg.service(ping_pong);
+  cfg.service(hello_message);
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Message {
   pub id: String,

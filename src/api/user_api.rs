@@ -3,10 +3,19 @@ use actix_web::{
     post, get, put, delete,
     web::{Data, Json, Path},
     HttpResponse,
+    web,
 };
 use log::info;
 use log::warn;
 use validator::Validate;
+
+pub fn init(cfg: &mut web::ServiceConfig) {
+    cfg.service(create_user);
+    cfg.service(get_user);
+    cfg.service(update_user);
+    cfg.service(delete_user);
+    cfg.service(get_all_users);
+}
 
 #[post("/users")]
 pub async fn create_user(db: Data<MongoRepo>, new_user: Json<User>) -> HttpResponse {

@@ -3,8 +3,6 @@ mod models;
 mod repository;
 
 use actix_web::{web::Data, App, middleware, HttpServer};
-use api::user_api::{create_user, get_user, update_user, delete_user, get_all_users};
-use api::hello_api::{ping_pong, hello_message};
 use repository::mongodb_repo::MongoRepo;
 use dotenv::dotenv;
 use std::env;
@@ -40,13 +38,8 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(middleware::Compress::default())
             .app_data(db_data.clone())
-            .service(create_user)
-            .service(get_user)
-            .service(update_user)
-            .service(delete_user)
-            .service(get_all_users)
-            .service(ping_pong)
-            .service(hello_message)
+            .configure(api::init_user_api)
+            .configure(api::init_hello_api)
     })
     .bind((server_host, server_port))?
     .run()
