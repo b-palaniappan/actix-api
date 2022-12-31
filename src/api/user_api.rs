@@ -6,21 +6,29 @@ use actix_web::{
 };
 use log::info;
 use log::warn;
+use validator::Validate;
 
 #[post("/users")]
 pub async fn create_user(db: Data<MongoRepo>, new_user: Json<User>) -> HttpResponse {
-    info!("creating a new user with name - {}", new_user.name);
-    let data = User {
-        id: None,
-        name: new_user.name.to_owned(),
-        location: new_user.location.to_owned(),
-        title: new_user.title.to_owned(),
-    };
-    let user_detail = db.create_user(data).await;
-    match user_detail {
-        Ok(user) => HttpResponse::Ok().json(user),
-        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+    let is_valid = new_user.validate();
+    match is_valid {
+        Ok(_) => {
+            info!("creating a new user with name - {}", new_user.name);
+            let data = User {
+                id: None,
+                name: new_user.name.to_owned(),
+                location: new_user.location.to_owned(),
+                title: new_user.title.to_owned(),
+            };
+            let user_detail = db.create_user(data).await;
+            match user_detail {
+                Ok(user) => HttpResponse::Created().json(user),
+                Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+            }
+        },
+        Err(e) => HttpResponse::BadRequest().json(e),
     }
+    
 }
 
 #[get("/users/{id}")]
