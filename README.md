@@ -5,7 +5,7 @@ Rust Actix REST API application with MongoDB
 - [x] Basic CRUD calls using MongoDB.
 - [x] Environment Config.
 - [x] Logging.
-- [ ] Add JSON validator.
+- [x] Add JSON validator.
 - [ ] Add security may be JWT.
 - [ ] Add role based JWT.
 - [ ] Global and Local api Error Handling.
