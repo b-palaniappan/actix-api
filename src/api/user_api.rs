@@ -1,9 +1,8 @@
 use crate::{models::user_model::User, repository::mongodb_repo::MongoRepo};
 use actix_web::{
-    post, get, put, delete,
+    delete, get, post, put, web,
     web::{Data, Json, Path},
     HttpResponse,
-    web,
 };
 use log::info;
 use log::warn;
@@ -34,10 +33,9 @@ pub async fn create_user(db: Data<MongoRepo>, new_user: Json<User>) -> HttpRespo
                 Ok(user) => HttpResponse::Created().json(user),
                 Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
             }
-        },
+        }
         Err(e) => HttpResponse::BadRequest().json(e),
     }
-    
 }
 
 #[get("/users/{id}")]
@@ -75,13 +73,13 @@ pub async fn update_user(
         Ok(update) => {
             if update.matched_count == 1 {
                 let updated_user_info = db.get_user(&id).await;
-                return match updated_user_info {
+                match updated_user_info {
                     Ok(user) => HttpResponse::Ok().json(user),
                     Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
-                };
+                }
             } else {
                 warn!("User with id -{} not found update user by ID", id);
-                return HttpResponse::NotFound().body("No user found with specified ID");
+                HttpResponse::NotFound().body("No user found with specified ID")
             }
         }
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
@@ -98,10 +96,10 @@ pub async fn delete_user(db: Data<MongoRepo>, path: Path<String>) -> HttpRespons
     match result {
         Ok(res) => {
             if res.deleted_count == 1 {
-                return HttpResponse::NoContent().finish();
+                HttpResponse::NoContent().finish()
             } else {
                 warn!("User with id -{} not found for delete user by ID", id);
-                return HttpResponse::NotFound().body("User with specified ID not found!");
+                HttpResponse::NotFound().body("User with specified ID not found!")
             }
         }
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()),

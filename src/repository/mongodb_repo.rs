@@ -1,13 +1,13 @@
-use std::env;
 use futures::stream::TryStreamExt;
 use nanoid::nanoid;
+use std::env;
 
+use crate::models::user_model::User;
 use mongodb::{
-    bson::{extjson::de::Error, doc},
-    results::{InsertOneResult, UpdateResult, DeleteResult},
+    bson::{doc, extjson::de::Error},
+    results::{DeleteResult, InsertOneResult, UpdateResult},
     Client, Collection,
 };
-use crate::models::user_model::User;
 
 pub struct MongoRepo {
     col: Collection<User>,
@@ -18,8 +18,8 @@ impl MongoRepo {
     // Get DB connection url from environment file and connect.
     pub async fn init() -> Self {
         let uri = match env::var("MONGO.URI") {
-            Ok(v) => v.to_string(),
-            Err(_) => format!("Error loading env variable"),
+            Ok(v) => v,
+            Err(_) => "Error loading env variable".to_string(),
         };
         let client = Client::with_uri_str(uri).await.unwrap();
         let db = client.database("rustDB");
@@ -39,7 +39,6 @@ impl MongoRepo {
             .col
             .insert_one(new_doc, None)
             .await
-            .ok()
             .expect("Error creating user");
         Ok(user)
     }
@@ -52,7 +51,6 @@ impl MongoRepo {
             .col
             .find_one(filter, None)
             .await
-            .ok()
             .expect("Error getting user's detail");
         Ok(user_detail.unwrap())
     }
@@ -73,7 +71,6 @@ impl MongoRepo {
             .col
             .update_one(filter, new_doc, None)
             .await
-            .ok()
             .expect("Error updating user");
         Ok(updated_doc)
     }
@@ -85,7 +82,6 @@ impl MongoRepo {
             .col
             .delete_one(filter, None)
             .await
-            .ok()
             .expect("Error deleting user");
         Ok(user_detail)
     }
@@ -95,17 +91,15 @@ impl MongoRepo {
             .col
             .find(None, None)
             .await
-            .ok()
             .expect("Error getting list of users");
         let mut users: Vec<User> = Vec::new();
         while let Some(user) = cursors
             .try_next()
             .await
-            .ok()
-            .expect("Error mapping through cursor") {
+            .expect("Error mapping through cursor")
+        {
             users.push(user)
         }
         Ok(users)
     }
-    
 }

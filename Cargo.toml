@@ -1,18 +1,30 @@
 [package]
 name = "actix-api"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
+authors = ["Bala"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# Web
 actix-web = "4"
-chrono = "0.4"
-dotenv = "0.15"
-futures = "0.3"
+
+# Logging
 log = "0.4"
 log4rs = "1"
+
+# Data store
 mongodb = "2"
-nanoid = "0.4"
+
+# Serde
 serde = { version = "1.0", features = ["derive"] }
+futures = "0.3"
+
+# validator
 validator = { version = "0.16", features = ["derive"] }
+
+# Utils
+chrono = "0.4"
+dotenv = "0.15"
+nanoid = "0.4"
