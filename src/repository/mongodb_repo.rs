@@ -44,14 +44,13 @@ impl MongoRepo {
     }
 
     // Get a user by given id from MongoDB database
-    pub async fn get_user(&self, id: &String) -> Result<User, Error> {
+    pub async fn get_user(&self, id: &String) -> Result<Option<User>, Error> {
         let obj_id = String::from(id);
         let filter = doc! {"_id": obj_id};
         let user_detail = self
             .col
             .find_one(filter, None)
-            .await
-            .expect("Error getting user's detail");
+            .await;
         Ok(user_detail.unwrap())
     }
 

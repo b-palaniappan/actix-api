@@ -47,7 +47,12 @@ pub async fn get_user(db: Data<MongoRepo>, path: Path<String>) -> HttpResponse {
     }
     let user_detail = db.get_user(&id).await;
     match user_detail {
-        Ok(user) => HttpResponse::Ok().json(user),
+        Ok(user) => {
+            match user {
+                Some(u) => HttpResponse::Created().json(u),
+                None => HttpResponse::NotFound().body("No user found with specified ID"),
+            }
+        },
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
     }
 }
