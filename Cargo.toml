@@ -2,29 +2,32 @@
 name = "actix-api"
 version = "0.2.1"
 edition = "2021"
-authors = ["Bala"]
+authors = ["Bala", "dummy@c12.io"]
+description = "Actix web API application with MongoDB backend store"
+readme = "README.md"
+license = "MIT"
+keywords = ["API", "actix-web", "mongodb"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-# Web
+# actix core web
 actix-web = "4"
 
-# Logging
-log = "0.4"
+# logging
+log = "0"
 log4rs = "1"
 
-# Data store
+# mongodb driver
 mongodb = "2"
 
-# Serde
+# JSON Seralizer
 serde = { version = "1.0", features = ["derive"] }
-futures = "0.3"
-
-# validator
-validator = { version = "0.16", features = ["derive"] }
 
 # Utils
-chrono = "0.4"
-dotenv = "0.15"
-nanoid = "0.4"
+futures = "0"
+validator = { version = "0", features = ["derive"] }
+chrono = "0"
+dotenv = "0"
+nanoid = "0"
+

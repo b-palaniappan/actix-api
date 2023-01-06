@@ -1,5 +1,4 @@
 // demo api handler. Playing with some handler and JSON payloads.
-
 use actix_web::{get, web, HttpResponse, Responder, Result};
 use chrono::Utc;
 use nanoid::nanoid;
@@ -17,11 +16,13 @@ pub struct Message {
     pub time_stamp: String,
 }
 
+// Ping Pong controller
 #[get("/ping")]
 pub async fn ping_pong() -> impl Responder {
     HttpResponse::Ok().body("Hello World")
 }
 
+// Hello JSON controller
 #[get("/hello")]
 pub async fn hello_message() -> Result<impl Responder> {
     let message = Message {

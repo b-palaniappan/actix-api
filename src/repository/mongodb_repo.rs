@@ -53,7 +53,8 @@ impl MongoRepo {
             .await;
         Ok(user_detail.unwrap())
     }
-
+    
+    // Update a user for give unique user id.
     pub async fn update_user(&self, id: &String, new_user: User) -> Result<UpdateResult, Error> {
         let obj_id = String::from(id);
         let filter = doc! {"_id": obj_id};
@@ -73,7 +74,8 @@ impl MongoRepo {
             .expect("Error updating user");
         Ok(updated_doc)
     }
-
+    
+    // Delete a user for given unique user id.
     pub async fn delete_user(&self, id: &String) -> Result<DeleteResult, Error> {
         let obj_id = String::from(id);
         let filter = doc! {"_id": obj_id};
@@ -85,6 +87,7 @@ impl MongoRepo {
         Ok(user_detail)
     }
 
+    // Fetch all users from the database
     pub async fn get_all_users(&self) -> Result<Vec<User>, Error> {
         let mut cursors = self
             .col

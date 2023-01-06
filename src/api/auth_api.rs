@@ -1,4 +1,5 @@
-use actix_web::{post, put, web, web::Json, HttpResponse};
+use actix_web::{get, post, put, web, web::Json, HttpResponse};
+use log::info;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -55,6 +56,12 @@ pub struct UpdatePasswordRequest {
     pub new_password: String,
 }
 
+#[derive(Debug, Serialize, Deserialize, Validate)]
+pub struct ForgotPasswordRequest {
+    #[validate(email(message = "email must be valid email"))]
+    pub email: String,
+}
+
 #[post("/a/register")]
 pub async fn auth_register(register_user: Json<RegisterRequest>) -> HttpResponse {
     HttpResponse::Ok().json(register_user)
@@ -70,6 +77,13 @@ pub async fn update_password(update_password: Json<UpdatePasswordRequest>) -> Ht
     HttpResponse::Ok().json(update_password)
 }
 
-// TODO: forgot Password
+#[post("/a/forgot-password")]
+pub async fn forgot_password(forgot_password: Json<ForgotPasswordRequest>) -> HttpResponse {
+    HttpResponse::Ok().json(forgot_password)
+}
 
-// TODO: Logout
+#[get("/a/logout/{user_id}")]
+pub async fn logout(path: web::Path<String>) -> HttpResponse {
+    info!("{}", path);
+    HttpResponse::NoContent().finish()
+}
