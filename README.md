@@ -20,7 +20,7 @@ Rust Actix REST API application with MongoDB
 ```json
 {
   "status": 404,
-  "timestamp": "2022-12-25T15:25:35.089z",
+  "time": "2022-12-25T15:25:35.089z",
   "message": "User not found for id - 2893f9283uo2",
   "debugMessage": "User not found for id - 2893f9283uo2",
   "subErrors": [

@@ -1,4 +1,4 @@
-use crate::{models::user_model::User, repository::mongodb_repo::MongoRepo};
+use crate::{models::user_model::User, models::error_model::ApiError, repository::mongodb_repo::MongoRepo};
 use actix_web::{
     delete, get, post, put, web,
     web::{Data, Json, Path},
@@ -7,6 +7,7 @@ use actix_web::{
 use log::info;
 use log::warn;
 use validator::Validate;
+use chrono::{Utc, SecondsFormat};
 
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(create_user);
@@ -50,7 +51,12 @@ pub async fn get_user(db: Data<MongoRepo>, path: Path<String>) -> HttpResponse {
         Ok(user) => {
             match user {
                 Some(u) => HttpResponse::Created().json(u),
-                None => HttpResponse::NotFound().body("No user found with specified ID"),
+                None => HttpResponse::NotFound().json(ApiError{
+                    status: "404".to_owned(),
+                    time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
+                    message: "User not found for id".to_owned(),
+                    debug_message: "User not found for id".to_owned()
+                }),
             }
         },
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()),

@@ -4,7 +4,8 @@ use std::env;
 
 use crate::models::user_model::User;
 use mongodb::{
-    bson::{doc, extjson::de::Error},
+    bson::{doc},
+    error::Error,
     results::{DeleteResult, InsertOneResult, UpdateResult},
     Client, Collection,
 };
@@ -35,23 +36,20 @@ impl MongoRepo {
             location: new_user.location,
             title: new_user.title,
         };
-        let user = self
+        self
             .col
             .insert_one(new_doc, None)
             .await
-            .expect("Error creating user");
-        Ok(user)
     }
 
     // Get a user by given id from MongoDB database
     pub async fn get_user(&self, id: &String) -> Result<Option<User>, Error> {
         let obj_id = String::from(id);
         let filter = doc! {"_id": obj_id};
-        let user_detail = self
+        self
             .col
             .find_one(filter, None)
-            .await;
-        Ok(user_detail.unwrap())
+            .await
     }
     
     // Update a user for give unique user id.
@@ -67,24 +65,20 @@ impl MongoRepo {
                     "title": new_user.title
                 },
         };
-        let updated_doc = self
+        self
             .col
             .update_one(filter, new_doc, None)
             .await
-            .expect("Error updating user");
-        Ok(updated_doc)
     }
     
     // Delete a user for given unique user id.
-    pub async fn delete_user(&self, id: &String) -> Result<DeleteResult, Error> {
+    pub async fn delete_user(&self, id: &String) -> Result<DeleteResult,Error> {
         let obj_id = String::from(id);
         let filter = doc! {"_id": obj_id};
-        let user_detail = self
+        self
             .col
             .delete_one(filter, None)
             .await
-            .expect("Error deleting user");
-        Ok(user_detail)
     }
 
     // Fetch all users from the database
@@ -92,13 +86,11 @@ impl MongoRepo {
         let mut cursors = self
             .col
             .find(None, None)
-            .await
-            .expect("Error getting list of users");
+            .await?;
         let mut users: Vec<User> = Vec::new();
         while let Some(user) = cursors
             .try_next()
-            .await
-            .expect("Error mapping through cursor")
+            .await?
         {
             users.push(user)
         }
