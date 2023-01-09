@@ -4,7 +4,7 @@ use std::env;
 
 use crate::models::user_model::User;
 use mongodb::{
-    bson::{doc},
+    bson::doc,
     error::Error,
     results::{DeleteResult, InsertOneResult, UpdateResult},
     Client, Collection,
@@ -36,22 +36,16 @@ impl MongoRepo {
             location: new_user.location,
             title: new_user.title,
         };
-        self
-            .col
-            .insert_one(new_doc, None)
-            .await
+        self.col.insert_one(new_doc, None).await
     }
 
     // Get a user by given id from MongoDB database
     pub async fn get_user(&self, id: &String) -> Result<Option<User>, Error> {
         let obj_id = String::from(id);
         let filter = doc! {"_id": obj_id};
-        self
-            .col
-            .find_one(filter, None)
-            .await
+        self.col.find_one(filter, None).await
     }
-    
+
     // Update a user for give unique user id.
     pub async fn update_user(&self, id: &String, new_user: User) -> Result<UpdateResult, Error> {
         let obj_id = String::from(id);
@@ -65,33 +59,21 @@ impl MongoRepo {
                     "title": new_user.title
                 },
         };
-        self
-            .col
-            .update_one(filter, new_doc, None)
-            .await
+        self.col.update_one(filter, new_doc, None).await
     }
-    
+
     // Delete a user for given unique user id.
-    pub async fn delete_user(&self, id: &String) -> Result<DeleteResult,Error> {
+    pub async fn delete_user(&self, id: &String) -> Result<DeleteResult, Error> {
         let obj_id = String::from(id);
         let filter = doc! {"_id": obj_id};
-        self
-            .col
-            .delete_one(filter, None)
-            .await
+        self.col.delete_one(filter, None).await
     }
 
     // Fetch all users from the database
     pub async fn get_all_users(&self) -> Result<Vec<User>, Error> {
-        let mut cursors = self
-            .col
-            .find(None, None)
-            .await?;
+        let mut cursors = self.col.find(None, None).await?;
         let mut users: Vec<User> = Vec::new();
-        while let Some(user) = cursors
-            .try_next()
-            .await?
-        {
+        while let Some(user) = cursors.try_next().await? {
             users.push(user)
         }
         Ok(users)

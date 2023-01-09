@@ -1,7 +1,5 @@
 use crate::{
-    models::error_model::ApiError,
-    models::{error_model::CustomError, user_model::User},
-    repository::mongodb_repo::MongoRepo,
+    models::error_model::ApiError, models::user_model::User, repository::mongodb_repo::MongoRepo,
 };
 use actix_web::{
     delete, get, post, put, web,
