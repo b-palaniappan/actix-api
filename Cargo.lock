@@ -8,6 +8,7 @@ version = "0.2.1"
 dependencies = [
  "actix-web",
  "chrono",
+ "derive_more",
  "dotenv",
  "futures",
  "log",

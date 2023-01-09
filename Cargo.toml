@@ -30,4 +30,5 @@ validator = { version = "0", features = ["derive"] }
 chrono = "0"
 dotenv = "0"
 nanoid = "0"
+derive_more = "0"
 

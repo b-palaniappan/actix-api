@@ -1,13 +1,18 @@
-use crate::{models::user_model::User, models::error_model::ApiError, repository::mongodb_repo::MongoRepo};
+use crate::{
+    models::error_model::ApiError,
+    models::{error_model::CustomError, user_model::User},
+    repository::mongodb_repo::MongoRepo,
+};
 use actix_web::{
     delete, get, post, put, web,
     web::{Data, Json, Path},
     HttpResponse,
 };
+use chrono::{SecondsFormat, Utc};
+use log::error;
 use log::info;
 use log::warn;
 use validator::Validate;
-use chrono::{Utc, SecondsFormat};
 
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(create_user);
@@ -32,10 +37,26 @@ pub async fn create_user(db: Data<MongoRepo>, new_user: Json<User>) -> HttpRespo
             let user_detail = db.create_user(data).await;
             match user_detail {
                 Ok(user) => HttpResponse::Created().json(user),
-                Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+                Err(err) => {
+                    error!("Error: {}", err);
+                    HttpResponse::InternalServerError().json(ApiError {
+                        status: 500,
+                        time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
+                        message: "Internal server error".to_owned(),
+                        debug_message: None,
+                    })
+                }
             }
         }
-        Err(e) => HttpResponse::BadRequest().json(e),
+        Err(err) => {
+            error!("Error: {}", err);
+            HttpResponse::BadRequest().json(ApiError {
+                status: 500,
+                time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
+                message: "Internal server error".to_owned(),
+                debug_message: None,
+            })
+        }
     }
 }
 
@@ -48,18 +69,24 @@ pub async fn get_user(db: Data<MongoRepo>, path: Path<String>) -> HttpResponse {
     }
     let user_detail = db.get_user(&id).await;
     match user_detail {
-        Ok(user) => {
-            match user {
-                Some(u) => HttpResponse::Created().json(u),
-                None => HttpResponse::NotFound().json(ApiError{
-                    status: "404".to_owned(),
-                    time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
-                    message: "User not found for id".to_owned(),
-                    debug_message: "User not found for id".to_owned()
-                }),
-            }
+        Ok(user) => match user {
+            Some(u) => HttpResponse::Created().json(u),
+            None => HttpResponse::NotFound().json(ApiError {
+                status: 404,
+                time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
+                message: "User not found for id".to_owned(),
+                debug_message: Some("User not found for id".to_owned()),
+            }),
         },
-        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+        Err(err) => {
+            error!("Error: {}", err);
+            HttpResponse::InternalServerError().json(ApiError {
+                status: 500,
+                time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
+                message: "Internal server error".to_owned(),
+                debug_message: None,
+            })
+        }
     }
 }
 
@@ -86,14 +113,30 @@ pub async fn update_user(
                 let updated_user_info = db.get_user(&id).await;
                 match updated_user_info {
                     Ok(user) => HttpResponse::Ok().json(user),
-                    Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+                    Err(err) => {
+                        error!("Error: {}", err);
+                        HttpResponse::InternalServerError().json(ApiError {
+                            status: 500,
+                            time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
+                            message: "Internal server error".to_owned(),
+                            debug_message: None,
+                        })
+                    }
                 }
             } else {
                 warn!("User with id -{} not found update user by ID", id);
                 HttpResponse::NotFound().body("No user found with specified ID")
             }
         }
-        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+        Err(err) => {
+            error!("Error: {}", err);
+            HttpResponse::InternalServerError().json(ApiError {
+                status: 500,
+                time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
+                message: "Internal server error".to_owned(),
+                debug_message: None,
+            })
+        }
     }
 }
 
