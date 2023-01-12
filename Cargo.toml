@@ -22,7 +22,7 @@ log4rs = "1"
 mongodb = "2"
 
 # JSON Seralizer
-serde = { version = "1.0", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
 
 # Utils
 futures = "0"
@@ -31,4 +31,3 @@ chrono = "0"
 dotenv = "0"
 nanoid = "0"
 derive_more = "0"
-

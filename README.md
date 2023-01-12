@@ -1,14 +1,16 @@
 # actix-api
+
 Rust Actix REST API application with MongoDB
 
 ### Todo
+
 - [x] Basic CRUD calls using MongoDB.
 - [x] Environment Config.
 - [x] Logging.
 - [x] Add JSON validator.
 - [ ] Add security may be JWT.
 - [ ] Add role based JWT.
-- [ ] Global and Local api Error Handling.
+- [x] Global and Local api Error Handling.
 - [ ] Form bean and Entity bean mapping.
 - [ ] Add Unit testing.
 - [ ] Add integration testing.
@@ -16,7 +18,9 @@ Rust Actix REST API application with MongoDB
 - [ ] Redis cache.
 
 ### Random Notes.
+
 #### Api Error response structure.
+
 ```json
 {
   "status": 404,
@@ -33,4 +37,3 @@ Rust Actix REST API application with MongoDB
   ]
 }
 ```
-

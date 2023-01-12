@@ -1,8 +1,11 @@
 use actix_web::{error::ResponseError, http::StatusCode, HttpResponse};
+use chrono::{SecondsFormat, Utc};
 use derive_more::{Display, Error};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Display)]
+// TODO: Handle validation error with whats wrong and which filed...
+// -- Error handing.
+#[derive(Debug, Display, Error)]
 pub enum ApiErrorType {
     #[display(fmt = "Internal server error. Try again after some time.")]
     InternalServerError,
@@ -25,105 +28,39 @@ pub struct ApiError {
     pub debug_message: Option<String>,
 }
 
-// Struct which defines the structure of the error response
-#[derive(Serialize)]
-struct FormattedErrorResponse {
-    status_code: u16,
-    error: String,
-    message: String,
-}
-
-#[derive(Debug, Display, Error)]
-pub enum CustomError {
-    // Formatting the validation error message
-    #[display(fmt = "Validation error on field: {}", field)]
-    ValidationError { field: String },
-
-    // Formatting the internal server error message
-    #[display(fmt = "An internal error occured. Please try again later.")]
-    InternalError,
-
-    // Formatting the bad request error message
-    #[display(fmt = "Bad request")]
-    BadClientData,
-
-    // Formatting the Not found error message
-    #[display(fmt = "Not found")]
-    NotFound,
-}
-
-impl CustomError {
-    fn name(&self) -> String {
+// Set Debug Error messages for Global error.
+impl ApiErrorType {
+    fn debug_message(&self) -> String {
         match self {
-            CustomError::ValidationError { .. } => "Validation Error".to_owned(),
-            CustomError::InternalError => "Internal Server Error".to_owned(),
-            CustomError::BadClientData => "Bad request".to_owned(),
-            CustomError::NotFound => "Not found".to_owned(),
+            ApiErrorType::InternalServerError => {
+                "Internal server error. Please try again later.".to_owned()
+            }
+            ApiErrorType::BadRequest => "User not found for the given ID".to_owned(),
+            ApiErrorType::UnsupportedMediaType => "Bad user data".to_owned(),
+            ApiErrorType::UserNotFound => "User not found for given ID".to_owned(),
         }
     }
 }
 
-// Implementation ResponseError trait for the custom struct
-impl ResponseError for CustomError {
-    // Function to generate the error response
+// Global error handling with actix-web ResponseError.
+impl ResponseError for ApiErrorType {
+    // Global error handler Http Response payload
     fn error_response(&self) -> HttpResponse {
-        let error_response = FormattedErrorResponse {
-            status_code: self.status_code().as_u16(),
-            error: self.to_string(),
+        HttpResponse::build(self.status_code()).json(ApiError {
+            status: self.status_code().as_u16(),
+            time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
             message: self.to_string(),
-        };
-        HttpResponse::build(self.status_code()).json(error_response)
+            debug_message: Some(self.debug_message()),
+        })
     }
-    // Function to generate error code
+
+    // Global error handler status code.
     fn status_code(&self) -> StatusCode {
         match *self {
-            CustomError::InternalError => StatusCode::INTERNAL_SERVER_ERROR,
-            CustomError::ValidationError { .. } => StatusCode::BAD_REQUEST,
-            CustomError::BadClientData => StatusCode::BAD_REQUEST,
-            CustomError::NotFound => StatusCode::NOT_FOUND,
+            ApiErrorType::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
+            ApiErrorType::BadRequest => StatusCode::BAD_REQUEST,
+            ApiErrorType::UnsupportedMediaType => StatusCode::UNSUPPORTED_MEDIA_TYPE,
+            ApiErrorType::UserNotFound => StatusCode::NOT_FOUND,
         }
     }
 }
-
-// impl ResponseError for ApiError {
-// fn status_code(&self) -> StatusCode {}
-
-// fn error_response(&self) -> HttpResponse {
-// match self {
-// ApiError::InternalServerError => {
-// Ok(HttpResponse::InternalServerError().json(ApiError {
-// status: 500,
-// time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
-// message: "Internal server error".to_owned,
-// debug_message: None,
-// }));
-// }
-
-// ApiError::BadRequest => {
-// Ok(HttpResponse::BadRequest().json(ApiError {
-// status: 400,
-// time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
-// message: "Bad request".to_owned(),
-// debug_message: Some("Bad request parameter or payload.".to_owned()),
-// }));
-// }
-
-// ApiError::UserNotFound => {
-// Ok(HttpResponse::NotFound().json(ApiError {
-// status: 404,
-// time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
-// message: "User not found for the given id".to_owned(),
-// debug_message: "User not found for the given id. Verify the user unique id in the request."
-// }));
-// }
-
-// _ => Ok(HttpResponse::InternalServerError().json(ApiError {
-// status: 500,
-// time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
-// message: "Internal server error".to_owned(),
-// debug_message: None,
-// })),
-// }
-// }
-// }
-
