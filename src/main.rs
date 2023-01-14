@@ -2,7 +2,10 @@ mod api;
 mod models;
 mod repository;
 
-use actix_web::{middleware, web::Data, App, HttpServer};
+use actix_web::{
+    error::Error, error::InternalError, error::JsonPayloadError, HttpRequest, HttpResponse,
+};
+use actix_web::{middleware, web::Data, web::JsonConfig, App, HttpServer};
 use dotenv::dotenv;
 use log::info;
 use repository::mongodb_repo::MongoRepo;
@@ -41,6 +44,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(middleware::Compress::default())
             .app_data(db_data.clone())
+            .app_data(JsonConfig::default().error_handler(json_error_handler))
             .configure(api::init_user_api)
             .configure(api::init_hello_api)
             .configure(api::init_auth_api)
@@ -52,4 +56,17 @@ async fn main() -> std::io::Result<()> {
     .unwrap_or_else(|_| panic!("error binding to port '{:?}'", stringify!($server_port)))
     .run()
     .await
+}
+
+// Handle json parser errors.
+fn json_error_handler(err: JsonPayloadError, _req: &HttpRequest) -> Error {
+    let detail = err.to_string();
+    let resp = match &err {
+        JsonPayloadError::ContentType => HttpResponse::UnsupportedMediaType().json(detail),
+        JsonPayloadError::Deserialize(json_err) if json_err.is_data() => {
+            HttpResponse::UnprocessableEntity().json(detail)
+        }
+        _ => HttpResponse::BadRequest().json(detail),
+    };
+    InternalError::from_response(err, resp).into()
 }
