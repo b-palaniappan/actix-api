@@ -6,8 +6,10 @@ use actix_web::{
     error::Error, error::InternalError, error::JsonPayloadError, HttpRequest, HttpResponse,
 };
 use actix_web::{middleware, web::Data, web::JsonConfig, App, HttpServer};
+use chrono::{SecondsFormat, Utc};
 use dotenv::dotenv;
 use log::info;
+use models::error_model::ApiError;
 use repository::mongodb_repo::MongoRepo;
 use std::env;
 
@@ -62,11 +64,26 @@ async fn main() -> std::io::Result<()> {
 fn json_error_handler(err: JsonPayloadError, _req: &HttpRequest) -> Error {
     let detail = err.to_string();
     let resp = match &err {
-        JsonPayloadError::ContentType => HttpResponse::UnsupportedMediaType().json(detail),
+        JsonPayloadError::ContentType => HttpResponse::UnsupportedMediaType().json(ApiError {
+            status: 415,
+            time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
+            message: "Unsupported media type".to_owned(),
+            debug_message: Some(detail),
+        }),
         JsonPayloadError::Deserialize(json_err) if json_err.is_data() => {
-            HttpResponse::UnprocessableEntity().json(detail)
+            HttpResponse::UnprocessableEntity().json(ApiError {
+                status: 422,
+                time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
+                message: "Unprocessable payload".to_owned(),
+                debug_message: Some(detail),
+            })
         }
-        _ => HttpResponse::BadRequest().json(detail),
+        _ => HttpResponse::BadRequest().json(ApiError {
+            status: 400,
+            time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
+            message: "Bad request. Missing parameter or wrong payload.".to_owned(),
+            debug_message: Some(detail),
+        }),
     };
     InternalError::from_response(err, resp).into()
 }

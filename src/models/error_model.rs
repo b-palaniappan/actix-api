@@ -13,9 +13,6 @@ pub enum ApiErrorType {
     #[display(fmt = "Bad request. Missing parameter or wrong payload.")]
     BadRequest,
 
-    #[display(fmt = "Unsupported media type. Only support JSON")]
-    UnsupportedMediaType,
-
     #[display(fmt = "User not found for the given ID")]
     UserNotFound,
 }
@@ -36,7 +33,6 @@ impl ApiErrorType {
                 "Internal server error. Please try again later.".to_owned()
             }
             ApiErrorType::BadRequest => "User not found for the given ID".to_owned(),
-            ApiErrorType::UnsupportedMediaType => "Bad user data".to_owned(),
             ApiErrorType::UserNotFound => "User not found for given ID".to_owned(),
         }
     }
@@ -59,7 +55,6 @@ impl ResponseError for ApiErrorType {
         match *self {
             ApiErrorType::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
             ApiErrorType::BadRequest => StatusCode::BAD_REQUEST,
-            ApiErrorType::UnsupportedMediaType => StatusCode::UNSUPPORTED_MEDIA_TYPE,
             ApiErrorType::UserNotFound => StatusCode::NOT_FOUND,
         }
     }
