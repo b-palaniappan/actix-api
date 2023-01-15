@@ -1,7 +1,7 @@
 mod api;
+mod auth;
 mod models;
 mod repository;
-mod auth;
 
 use actix_web::{
     error::Error, error::InternalError, error::JsonPayloadError, HttpRequest, HttpResponse,
@@ -51,6 +51,7 @@ async fn main() -> std::io::Result<()> {
             .configure(api::init_user_api)
             .configure(api::init_hello_api)
             .configure(api::init_auth_api)
+            .configure(api::init_ping_api)
             .wrap(middleware::DefaultHeaders::new().add(("X-Version", "0.2")))
             // enable logger - always register actix-web Logger middleware last
             .wrap(middleware::Logger::default())
