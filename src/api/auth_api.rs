@@ -1,8 +1,9 @@
-use actix_web::{get, post, put, web, web::Json, HttpResponse};
+use actix_web::{get, HttpResponse, post, put, web, web::Json};
 use log::info;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
-use crate::models::error_model::ApiError;
+
+use crate::models::error_model::ApiErrorType;
 
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(auth_register);
@@ -21,8 +22,8 @@ pub struct RegisterRequest {
     pub last_name: String,
 
     #[validate(length(
-        min = 12,
-        message = "password is required and must be at least 12 characters"
+    min = 12,
+    message = "password is required and must be at least 12 characters"
     ))]
     pub password: String,
 }
@@ -33,8 +34,8 @@ pub struct LoginRequest {
     pub email: String,
 
     #[validate(length(
-        min = 12,
-        message = "password is required and must be at least 12 characters"
+    min = 12,
+    message = "password is required and must be at least 12 characters"
     ))]
     pub password: String,
 }
@@ -45,14 +46,14 @@ pub struct UpdatePasswordRequest {
     pub email: String,
 
     #[validate(length(
-        min = 12,
-        message = "current password is required and must be at least 12 characters"
+    min = 12,
+    message = "current password is required and must be at least 12 characters"
     ))]
     pub current_password: String,
 
     #[validate(length(
-        min = 12,
-        message = "new password is required and must be at least 12 characters"
+    min = 12,
+    message = "new password is required and must be at least 12 characters"
     ))]
     pub new_password: String,
 }
@@ -64,7 +65,7 @@ pub struct ForgotPasswordRequest {
 }
 
 #[post("/a/register")]
-pub async fn auth_register(register_user: Json<RegisterRequest>) -> Result<HttpResponse, ApiError> {
+pub async fn auth_register(register_user: Json<RegisterRequest>) -> Result<HttpResponse, ApiErrorType> {
     Ok(HttpResponse::Ok().json(register_user))
 }
 
