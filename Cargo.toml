@@ -1,6 +1,6 @@
 [package]
 name = "actix-api"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2021"
 authors = ["Bala", "dummy@c12.io"]
 description = "Actix web API application with MongoDB backend store"
@@ -24,10 +24,18 @@ mongodb = "2"
 # JSON Seralizer
 serde = { version = "1", features = ["derive"] }
 
+# User authenttication and authorization
+jsonwebtoken = "8"
+actix-web-grants = "3"
+actix-web-httpauth = "0"
+rust-argon2 = "1"
+
+# request validation
+validator = { version = "0", features = ["derive"] }
+
 # Utils
 futures = "0"
-validator = { version = "0", features = ["derive"] }
-chrono = "0"
-dotenv = "0"
-nanoid = "0"
+chrono = "0"        # for time
+dotenv = "0"        # for environment properties
+nanoid = "0"        # to generate unique ids
 derive_more = "0"

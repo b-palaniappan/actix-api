@@ -2,6 +2,7 @@ use actix_web::{get, post, put, web, web::Json, HttpResponse};
 use log::info;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
+use crate::models::error_model::ApiError;
 
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(auth_register);
@@ -63,8 +64,8 @@ pub struct ForgotPasswordRequest {
 }
 
 #[post("/a/register")]
-pub async fn auth_register(register_user: Json<RegisterRequest>) -> HttpResponse {
-    HttpResponse::Ok().json(register_user)
+pub async fn auth_register(register_user: Json<RegisterRequest>) -> Result<HttpResponse, ApiError> {
+    Ok(HttpResponse::Ok().json(register_user))
 }
 
 #[post("/a/login")]

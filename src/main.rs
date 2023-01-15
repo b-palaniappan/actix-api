@@ -1,6 +1,7 @@
 mod api;
 mod models;
 mod repository;
+mod auth;
 
 use actix_web::{
     error::Error, error::InternalError, error::JsonPayloadError, HttpRequest, HttpResponse,
