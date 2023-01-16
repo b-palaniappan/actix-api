@@ -10,7 +10,7 @@ pub enum ApiErrorType {
     #[display(fmt = "Internal server error. Try again after some time.")]
     InternalServerError,
 
-    #[display(fmt = "Bad request. Missing parameter or wrong payload.")]
+    #[display(fmt = "Bad request.")]
     BadRequest,
 
     #[display(fmt = "User not found for the given ID")]
@@ -32,7 +32,9 @@ impl ApiErrorType {
             ApiErrorType::InternalServerError => {
                 "Internal server error. Please try again later.".to_owned()
             }
-            ApiErrorType::BadRequest => "User not found for the given ID".to_owned(),
+            ApiErrorType::BadRequest => {
+                "Bad request. Missing parameter or wrong payload.".to_owned()
+            }
             ApiErrorType::UserNotFound => "User not found for given ID".to_owned(),
         }
     }

@@ -1,5 +1,7 @@
-use actix_web::{get, HttpResponse, post, put, web, web::Json};
+use actix_web::{get, post, put, web, web::Json, HttpResponse};
+use argon2::{Config, ThreadMode, Variant, Version};
 use log::info;
+use log::warn;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -8,6 +10,9 @@ use crate::models::error_model::ApiErrorType;
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(auth_register);
     cfg.service(auth_login);
+    cfg.service(update_password);
+    cfg.service(forgot_password);
+    cfg.service(logout);
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
@@ -22,10 +27,16 @@ pub struct RegisterRequest {
     pub last_name: String,
 
     #[validate(length(
-    min = 12,
-    message = "password is required and must be at least 12 characters"
+        min = 12,
+        message = "password is required and must be at least 12 characters"
     ))]
     pub password: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RegisterResponse {
+    pub status: String,
+    pub message: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
@@ -34,10 +45,16 @@ pub struct LoginRequest {
     pub email: String,
 
     #[validate(length(
-    min = 12,
-    message = "password is required and must be at least 12 characters"
+        min = 12,
+        message = "password is required and must be at least 12 characters"
     ))]
     pub password: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct LoginResponse {
+    pub access_token: String,
+    pub token_type: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
@@ -46,14 +63,14 @@ pub struct UpdatePasswordRequest {
     pub email: String,
 
     #[validate(length(
-    min = 12,
-    message = "current password is required and must be at least 12 characters"
+        min = 12,
+        message = "current password is required and must be at least 12 characters"
     ))]
     pub current_password: String,
 
     #[validate(length(
-    min = 12,
-    message = "new password is required and must be at least 12 characters"
+        min = 12,
+        message = "new password is required and must be at least 12 characters"
     ))]
     pub new_password: String,
 }
@@ -65,8 +82,39 @@ pub struct ForgotPasswordRequest {
 }
 
 #[post("/a/register")]
-pub async fn auth_register(register_user: Json<RegisterRequest>) -> Result<HttpResponse, ApiErrorType> {
-    Ok(HttpResponse::Ok().json(register_user))
+pub async fn auth_register(
+    register_user: Json<RegisterRequest>,
+) -> Result<HttpResponse, ApiErrorType> {
+    // Step 1: Validate payload.
+    // Step 2: Hash password with argon2.
+    // Step 3: Store user to MongoDB.
+    match register_user.validate() {
+        Ok(_) => {
+            let salt = b"radomSalt";
+            let config = Config {
+                variant: Variant::Argon2id,
+                version: Version::Version13,
+                mem_cost: 65536,
+                time_cost: 10,
+                lanes: 4,
+                thread_mode: ThreadMode::Parallel,
+                secret: &[],
+                ad: &[],
+                hash_length: 64,
+            };
+            let hash = argon2::hash_encoded(register_user.password.as_bytes(), salt, &config);
+            info!("Hash - {}", hash.unwrap());
+            Ok(HttpResponse::Ok().json(RegisterResponse {
+                status: "Success".to_owned(),
+                message: "User registered successfully".to_owned(),
+            }))
+        }
+        Err(err) => {
+            warn!("Error: {}", err);
+            // Validation error.
+            Err(ApiErrorType::BadRequest)
+        }
+    }
 }
 
 #[post("/a/login")]
