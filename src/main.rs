@@ -4,6 +4,7 @@ mod config;
 mod constants;
 mod models;
 mod repository;
+mod services;
 
 use crate::config::db;
 use actix_web::{
