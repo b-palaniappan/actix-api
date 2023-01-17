@@ -1,8 +1,11 @@
 mod api;
 mod auth;
+mod config;
+mod constants;
 mod models;
 mod repository;
 
+use crate::config::db;
 use actix_web::{
     error::Error, error::InternalError, error::JsonPayloadError, HttpRequest, HttpResponse,
 };
@@ -11,7 +14,6 @@ use chrono::{SecondsFormat, Utc};
 use dotenv::dotenv;
 use log::info;
 use models::error_model::ApiError;
-use repository::mongodb_repo::MongoRepo;
 use std::env;
 
 #[actix_web::main]
@@ -24,8 +26,7 @@ async fn main() -> std::io::Result<()> {
     dotenv().ok();
 
     // Initialize MongoDB connection
-    let db = MongoRepo::init().await;
-    let db_data = Data::new(db);
+    let client = db::init().await;
 
     // Get Server host and port number from environment file.
     let server_host = match env::var("SERVER.HOST") {
@@ -46,7 +47,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .wrap(middleware::Compress::default())
-            .app_data(db_data.clone())
+            .app_data(Data::new(client.clone()))
             .app_data(JsonConfig::default().error_handler(json_error_handler))
             .configure(api::init_user_api)
             .configure(api::init_hello_api)
