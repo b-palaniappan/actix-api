@@ -86,8 +86,6 @@ pub async fn auth_register(
     register_user: Json<RegisterRequest>,
 ) -> Result<HttpResponse, ApiErrorType> {
     // Step 1: Validate payload.
-    // Step 2: Hash password with argon2.
-    // Step 3: Store user to MongoDB.
     match register_user.validate() {
         Ok(_) => {
             let salt = b"radomSalt";
