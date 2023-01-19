@@ -6,11 +6,14 @@ use serde::{Deserialize, Serialize};
 pub struct Auth {
     #[serde(rename = "_id")]
     pub id: String,
+    pub email: String,
     pub first_name: String,
     pub last_name: String,
     pub password_hash: String,
-    pub email: String,
-
+    pub active: bool,
+    pub reset_password: bool,
     #[serde(with = "chrono_datetime_as_bson_datetime")]
     pub created_ts: DateTime<Utc>,
+    #[serde(with = "chrono_datetime_as_bson_datetime")]
+    pub updated_ts: DateTime<Utc>,
 }

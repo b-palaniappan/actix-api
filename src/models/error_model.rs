@@ -42,6 +42,15 @@ impl ApiErrorType {
 
 // Global error handling with actix-web ResponseError.
 impl ResponseError for ApiErrorType {
+    // Global error handler status code.
+    fn status_code(&self) -> StatusCode {
+        match *self {
+            ApiErrorType::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
+            ApiErrorType::BadRequest => StatusCode::BAD_REQUEST,
+            ApiErrorType::UserNotFound => StatusCode::NOT_FOUND,
+        }
+    }
+
     // Global error handler Http Response payload
     fn error_response(&self) -> HttpResponse {
         HttpResponse::build(self.status_code()).json(ApiError {
@@ -50,14 +59,5 @@ impl ResponseError for ApiErrorType {
             message: self.to_string(),
             debug_message: Some(self.debug_message()),
         })
-    }
-
-    // Global error handler status code.
-    fn status_code(&self) -> StatusCode {
-        match *self {
-            ApiErrorType::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
-            ApiErrorType::BadRequest => StatusCode::BAD_REQUEST,
-            ApiErrorType::UserNotFound => StatusCode::NOT_FOUND,
-        }
     }
 }
