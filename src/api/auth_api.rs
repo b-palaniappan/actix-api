@@ -1,11 +1,14 @@
+use actix_web::web::Data;
 use actix_web::{get, post, put, web, web::Json, HttpResponse};
 use argon2::{Config, ThreadMode, Variant, Version};
 use log::info;
 use log::warn;
+use mongodb::Client;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::models::error_model::ApiErrorType;
+use crate::services::auth_service;
 
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(auth_register);
@@ -83,30 +86,12 @@ pub struct ForgotPasswordRequest {
 
 #[post("/a/register")]
 pub async fn auth_register(
+    client: Data<Client>,
     register_user: Json<RegisterRequest>,
 ) -> Result<HttpResponse, ApiErrorType> {
     // Step 1: Validate payload.
     match register_user.validate() {
-        Ok(_) => {
-            let salt = b"radomSalt";
-            let config = Config {
-                variant: Variant::Argon2id,
-                version: Version::Version13,
-                mem_cost: 65536,
-                time_cost: 10,
-                lanes: 4,
-                thread_mode: ThreadMode::Parallel,
-                secret: &[],
-                ad: &[],
-                hash_length: 64,
-            };
-            let hash = argon2::hash_encoded(register_user.password.as_bytes(), salt, &config);
-            info!("Hash - {}", hash.unwrap());
-            Ok(HttpResponse::Ok().json(RegisterResponse {
-                status: "Success".to_owned(),
-                message: "User registered successfully".to_owned(),
-            }))
-        }
+        Ok(_) => auth_service::create_user(&client, register_user.0).await,
         Err(err) => {
             warn!("Error: {}", err);
             // Validation error.

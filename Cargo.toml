@@ -20,6 +20,7 @@ log4rs = "1"
 
 # mongodb driver
 mongodb = "2"
+bson = { version = "2", features = ["chrono-0_4"]}
 
 # JSON Seralizer
 serde = { version = "1", features = ["derive"] }

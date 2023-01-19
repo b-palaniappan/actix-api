@@ -1,14 +1,14 @@
 use actix_web::web::Data;
 use futures::TryStreamExt;
-use nanoid::nanoid;
-
-use crate::{constants, models::user_model::User};
 use mongodb::{
     bson::doc,
     error::Error,
     results::{DeleteResult, InsertOneResult, UpdateResult},
     Client, Collection,
 };
+use nanoid::nanoid;
+
+use crate::{constants, models::user_model::User};
 
 // Add a new user to Mongo DB.
 pub async fn create_user(client: &Data<Client>, new_user: User) -> Result<InsertOneResult, Error> {
