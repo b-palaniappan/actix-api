@@ -3,7 +3,7 @@ use futures::TryStreamExt;
 use mongodb::{
     bson::doc,
     error::Error,
-    results::{DeleteResult, InsertOneResult, UpdateResult},
+    results::{DeleteResult, UpdateResult},
     Client, Collection,
 };
 use nanoid::nanoid;
@@ -11,7 +11,7 @@ use nanoid::nanoid;
 use crate::{constants, models::user_model::User};
 
 // Add a new user to Mongo DB.
-pub async fn create_user(client: &Data<Client>, new_user: User) -> Result<InsertOneResult, Error> {
+pub async fn create_user(client: &Data<Client>, new_user: User) -> Result<Option<User>, Error> {
     let new_doc = User {
         id: Some(nanoid!()),
         name: new_user.name,
@@ -21,7 +21,12 @@ pub async fn create_user(client: &Data<Client>, new_user: User) -> Result<Insert
     let collection = client
         .database(constants::MONGO_DATABASE)
         .collection(constants::MONGO_USER_COLLECTION);
-    collection.insert_one(new_doc, None).await
+    let added_user = collection.insert_one(new_doc, None).await;
+    // On successful add.. Retrieve the added record as response.
+    match added_user {
+        Ok(u) => collection.find_one(doc! {"_id": u.inserted_id}, None).await,
+        Err(err) => Err(err),
+    }
 }
 
 // Get a user by given id from MongoDB database
