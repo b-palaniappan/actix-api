@@ -1,6 +1,4 @@
-use std::future::Future;
-
-use actix_web::web::{Data, Json};
+use actix_web::web::Data;
 use actix_web::HttpResponse;
 use argon2::{Config, ThreadMode, Variant, Version};
 use chrono::Utc;
@@ -8,10 +6,12 @@ use log::error;
 use mongodb::Client;
 use nanoid::nanoid;
 
-use crate::api::auth_api::{RegisterRequest, RegisterResponse};
-use crate::models::auth_model::Auth;
-use crate::models::error_model::ApiErrorType;
-use crate::repository::auth_repo;
+use crate::{
+    api::auth_api::{LoginRequest, RegisterRequest, RegisterResponse},
+    models::auth_model::Auth,
+    models::error_model::ApiErrorType,
+    repository::auth_repo,
+};
 
 pub async fn create_user(
     client: &Data<Client>,
@@ -71,4 +71,27 @@ pub async fn create_user(
             message: "User already exists with email".to_owned(),
         }))
     }
+}
+
+// Login with credentials and generate JWT token after successful login.
+pub async fn login(
+    client: &Data<Client>,
+    login_request: LoginRequest,
+) -> Result<HttpResponse, ApiErrorType> {
+    // Step 1: Get auth user from MongoDB by email id.
+    let auth_user = auth_repo::fetch_by_email(client, &login_request.password).await;
+    // Step 2: Check password with hashed password from Database.
+    // TODO: remove unwrap from the auth_user...
+    let pwd_match = argon2::verify_encoded(
+        &auth_user.unwrap().password_hash,
+        login_request.password.as_bytes(),
+    );
+    match pwd_match {
+        Ok(_) => {
+            // Credentials verified successfully.
+            Ok(HttpResponse::Ok().json("Success"))
+        }
+        Err(_) => Err(ApiErrorType::AuthenticationError),
+    }
+    // Step 3: Generate JWT token with auth information.
 }

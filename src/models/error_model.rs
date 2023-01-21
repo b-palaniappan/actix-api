@@ -15,6 +15,12 @@ pub enum ApiErrorType {
 
     #[display(fmt = "User not found for the given ID")]
     UserNotFound,
+
+    #[display(fmt = "Authentication error.")]
+    AuthenticationError,
+
+    #[display(fmt = "Authorization error.")]
+    AuthorizationError,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -36,6 +42,12 @@ impl ApiErrorType {
                 "Bad request. Missing parameter or wrong payload.".to_owned()
             }
             ApiErrorType::UserNotFound => "User not found for given ID".to_owned(),
+            ApiErrorType::AuthenticationError => {
+                "User not authenticated. Please reauthenticate and try again.".to_owned()
+            }
+            ApiErrorType::AuthorizationError => {
+                "User not authorized to access this resource.".to_owned()
+            }
         }
     }
 }
@@ -48,6 +60,8 @@ impl ResponseError for ApiErrorType {
             ApiErrorType::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
             ApiErrorType::BadRequest => StatusCode::BAD_REQUEST,
             ApiErrorType::UserNotFound => StatusCode::NOT_FOUND,
+            ApiErrorType::AuthenticationError => StatusCode::UNAUTHORIZED,
+            ApiErrorType::AuthorizationError => StatusCode::FORBIDDEN,
         }
     }
 
