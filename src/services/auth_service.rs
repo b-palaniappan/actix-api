@@ -95,7 +95,7 @@ pub async fn login(
                 // Step 3: Generate JWT token with auth information.
                 match Claims::create_jwt_token(a) {
                     Ok(response) => Ok(HttpResponse::Ok().json(response)),
-                    Err(_) => Err(ApiErrorType::AuthorizationError),
+                    Err(_) => Err(ApiErrorType::AuthenticationError),
                 }
             } else {
                 Err(ApiErrorType::InvalidCredential)

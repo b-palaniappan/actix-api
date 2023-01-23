@@ -7,6 +7,7 @@ use actix_web::{
     web::{Data, Json, Path},
     HttpResponse,
 };
+use actix_web_grants::proc_macro::has_any_role;
 use log::warn;
 use mongodb::Client;
 use validator::Validate;
@@ -71,6 +72,7 @@ pub async fn delete_user(
 
 // Get list of all user in the database.
 #[get("/users")]
+#[has_any_role("ADMIN")]
 pub async fn get_all_users(client: Data<Client>) -> Result<HttpResponse, ApiErrorType> {
     user_service::get_all_users(&client).await
 }

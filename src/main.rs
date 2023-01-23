@@ -1,3 +1,24 @@
+use std::env;
+
+use actix_cors::Cors;
+use actix_web::dev::ServiceRequest;
+use actix_web::{
+    error::Error, error::InternalError, error::JsonPayloadError, http, web, HttpRequest,
+    HttpResponse,
+};
+use actix_web::{middleware, web::Data, web::JsonConfig, App, HttpServer};
+use actix_web_grants::permissions::AttachPermissions;
+use actix_web_httpauth::extractors::bearer::BearerAuth;
+use actix_web_httpauth::middleware::HttpAuthentication;
+use chrono::{SecondsFormat, Utc};
+use dotenv::dotenv;
+use log::{info, warn};
+
+use models::error_model::ApiError;
+
+use crate::auth::claims::Claims;
+use crate::config::db;
+
 mod api;
 mod auth;
 mod config;
@@ -5,18 +26,6 @@ mod constants;
 mod models;
 mod repository;
 mod services;
-
-use crate::config::db;
-use actix_cors::Cors;
-use actix_web::{
-    error::Error, error::InternalError, error::JsonPayloadError, http, HttpRequest, HttpResponse,
-};
-use actix_web::{middleware, web::Data, web::JsonConfig, App, HttpServer};
-use chrono::{SecondsFormat, Utc};
-use dotenv::dotenv;
-use log::info;
-use models::error_model::ApiError;
-use std::env;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -47,6 +56,7 @@ async fn main() -> std::io::Result<()> {
 
     // Config and start Actix-web server.
     HttpServer::new(move || {
+        let auth = HttpAuthentication::bearer(validator);
         App::new()
             // Configure CORS
             .wrap(
@@ -67,11 +77,17 @@ async fn main() -> std::io::Result<()> {
             // configure app data
             .app_data(Data::new(client.clone()))
             .app_data(JsonConfig::default().error_handler(json_error_handler))
-            // configure controller
-            .configure(api::init_user_api)
-            .configure(api::init_hello_api)
+            // Configure un-secure controller
             .configure(api::init_auth_api)
             .configure(api::init_ping_api)
+            // Configure secure controller with prefix '/api'
+            .service(
+                web::scope("/api")
+                    .wrap(auth)
+                    .configure(api::init_user_api)
+                    .configure(api::init_hello_api),
+            )
+            // configure controller
             .wrap(middleware::DefaultHeaders::new().add(("X-Version", "0.3.0")))
             // enable logger - always register actix-web Logger middleware last
             .wrap(middleware::Logger::default())
@@ -111,4 +127,23 @@ fn json_error_handler(err: JsonPayloadError, _req: &HttpRequest) -> Error {
         }),
     };
     InternalError::from_response(err, resp).into()
+}
+
+// Validator for JWT Token
+async fn validator(
+    req: ServiceRequest,
+    credentials: BearerAuth,
+) -> Result<ServiceRequest, (Error, ServiceRequest)> {
+    warn!("Validate jwt auth");
+    // We just get permissions from JWT
+    let result = Claims::decode_jwt(credentials.token());
+    match result {
+        Ok(claims) => {
+            warn!("Subject - {}", claims.sub);
+            req.attach(claims.permissions);
+            Ok(req)
+        }
+        // required by `actix-web-httpauth` validator signature
+        Err(e) => Err((e, req)),
+    }
 }
