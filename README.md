@@ -18,7 +18,11 @@ Rust Actix REST API application with MongoDB
 - [ ] Redis cache.
 - [ ] Pagination & Sorting of get list.
 - [ ] CORS Support for API.
-- [ ] Custom validation error. 
+- [x] Custom validation error. 
+
+### Feature Todo
+- [ ] Add events (like, auth event, user event etc...) and persist in a MongoDB table.
+- [ ] Implement Kafka or Pulsar event stream. Preferably Apache pulsar.
 
 ### Random Notes.
 
@@ -38,5 +42,30 @@ Rust Actix REST API application with MongoDB
       "message": "invalid email address"
     }
   ]
+}
+```
+
+#### Paginated data response structure.
+```json
+{
+  "message": "some message",
+  "data": [
+    {
+      "id": "rRCOeyvrlZC0o0NZmVs7L",
+      "name": "John Doe",
+      "created_at": "2023-01-20T23:43:51.459Z"
+    },
+    {
+      "id": "a1zFe085r2bh3ji5JjeYf",
+      "name": "Jane Doe",
+      "created_at": "2023-01-20T23:45:34.764Z"
+    }
+  ],
+  "offset": 1250,
+  "no_of_elements": 2,
+  "page_num": 5,
+  "page_size": 20,
+  "total_elements": 123,
+  "total_pages": 7
 }
 ```
