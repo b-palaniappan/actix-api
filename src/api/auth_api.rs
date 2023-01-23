@@ -18,6 +18,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 }
 
 // -- DTO's
+// TODO: Move DTO's to models or different package.
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct RegisterRequest {
     #[validate(email(message = "email must be valid email"))]

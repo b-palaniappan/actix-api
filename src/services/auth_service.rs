@@ -2,10 +2,11 @@ use actix_web::web::Data;
 use actix_web::HttpResponse;
 use argon2::{Config, ThreadMode, Variant, Version};
 use chrono::Utc;
-use log::error;
+use log::{error, warn};
 use mongodb::Client;
 use nanoid::nanoid;
 
+use crate::auth::claims::Claims;
 use crate::{
     api::auth_api::{LoginRequest, RegisterRequest, RegisterResponse},
     models::auth_model::Auth,
@@ -41,6 +42,7 @@ pub async fn create_user(
             first_name: register_user.first_name,
             last_name: register_user.last_name,
             email: register_user.email,
+            roles: vec![String::from("ROLE_USER")],
             active: true,
             reset_password: false,
             password_hash: match hash {
@@ -79,19 +81,29 @@ pub async fn login(
     login_request: LoginRequest,
 ) -> Result<HttpResponse, ApiErrorType> {
     // Step 1: Get auth user from MongoDB by email id.
-    let auth_user = auth_repo::fetch_by_email(client, &login_request.password).await;
-    // Step 2: Check password with hashed password from Database.
-    // TODO: remove unwrap from the auth_user...
-    let pwd_match = argon2::verify_encoded(
-        &auth_user.unwrap().password_hash,
-        login_request.password.as_bytes(),
-    );
-    match pwd_match {
-        Ok(_) => {
-            // Credentials verified successfully.
-            Ok(HttpResponse::Ok().json("Success"))
+    let auth_user = auth_repo::fetch_by_email(client, &login_request.email).await;
+
+    // Check if the user
+    match &auth_user {
+        Some(a) => {
+            // Step 2: Check password with hashed password from Database.
+            let pwd_match =
+                argon2::verify_encoded(&a.password_hash, login_request.password.as_bytes())
+                    .unwrap();
+            if pwd_match {
+                // Credentials verified successfully.
+                // Step 3: Generate JWT token with auth information.
+                match Claims::create_jwt_token(a) {
+                    Ok(response) => Ok(HttpResponse::Ok().json(response)),
+                    Err(_) => Err(ApiErrorType::AuthorizationError),
+                }
+            } else {
+                Err(ApiErrorType::InvalidCredential)
+            }
         }
-        Err(_) => Err(ApiErrorType::AuthenticationError),
+        None => {
+            warn!("User not found for email {}", login_request.email);
+            Err(ApiErrorType::InvalidCredential)
+        }
     }
-    // Step 3: Generate JWT token with auth information.
 }

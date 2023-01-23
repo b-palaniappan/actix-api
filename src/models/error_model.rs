@@ -1,11 +1,9 @@
 use actix_web::{error::ResponseError, http::StatusCode, HttpResponse};
 use chrono::{SecondsFormat, Utc};
 use derive_more::{Display, Error};
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use serde::Serialize;
 use validator::ValidationErrors;
 
-// TODO: Handle validation error with whats wrong and which filed...
 // -- Error handing.
 #[derive(Debug, Display, Error)]
 pub enum ApiErrorType {
@@ -29,6 +27,9 @@ pub enum ApiErrorType {
         validation_error: ValidationErrors,
         object: String,
     },
+
+    #[display(fmt = "Invalid credential.")]
+    InvalidCredential,
 }
 
 #[derive(Debug, Serialize)]
@@ -66,6 +67,9 @@ impl ApiErrorType {
                 "User not authorized to access this resource.".to_owned()
             }
             ApiErrorType::ValidationError { .. } => "Validation error".to_owned(),
+            ApiErrorType::InvalidCredential => {
+                "Invalid Credential. Checking email address and password".to_owned()
+            }
         }
     }
 }
@@ -81,6 +85,7 @@ impl ResponseError for ApiErrorType {
             ApiErrorType::AuthenticationError => StatusCode::UNAUTHORIZED,
             ApiErrorType::AuthorizationError => StatusCode::FORBIDDEN,
             ApiErrorType::ValidationError { .. } => StatusCode::UNPROCESSABLE_ENTITY,
+            ApiErrorType::InvalidCredential => StatusCode::UNAUTHORIZED,
         }
     }
 

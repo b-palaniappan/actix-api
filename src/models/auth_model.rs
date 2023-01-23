@@ -9,7 +9,10 @@ pub struct Auth {
     pub email: String,
     pub first_name: String,
     pub last_name: String,
+    // Password hash using Argon2
     pub password_hash: String,
+    // User roles
+    pub roles: Vec<String>,
     pub active: bool,
     pub reset_password: bool,
     #[serde(with = "chrono_datetime_as_bson_datetime")]
