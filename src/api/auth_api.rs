@@ -1,15 +1,14 @@
 use actix_web::web::Data;
 use actix_web::{get, post, put, web, web::Json, HttpResponse};
-use argon2::{Config, ThreadMode, Variant, Version};
 use log::info;
 use log::warn;
 use mongodb::Client;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::models::error_model::ApiErrorType;
-use crate::services::auth_service;
+use crate::{models::error_model::ApiErrorType, services::auth_service};
 
+// -- configurations
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(auth_register);
     cfg.service(auth_login);
@@ -18,6 +17,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(logout);
 }
 
+// -- DTO's
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct RegisterRequest {
     #[validate(email(message = "email must be valid email"))]
@@ -84,6 +84,8 @@ pub struct ForgotPasswordRequest {
     pub email: String,
 }
 
+// -- Controllers...
+// Register a user.
 #[post("/a/register")]
 pub async fn auth_register(
     client: Data<Client>,
@@ -100,22 +102,36 @@ pub async fn auth_register(
     }
 }
 
+// Login using credentials.
 #[post("/a/login")]
-pub async fn auth_login(login_user: Json<LoginRequest>) -> HttpResponse {
-    HttpResponse::Ok().json(login_user)
+pub async fn auth_login(
+    client: Data<Client>,
+    login_user: Json<LoginRequest>,
+) -> Result<HttpResponse, ApiErrorType> {
+    // Step 1: Validate payload.
+    match login_user.validate() {
+        Ok(_) => auth_service::login(&client, login_user.0).await,
+        Err(err) => {
+            warn!("Error: {}", err);
+            Err(ApiErrorType::BadRequest)
+        }
+    }
 }
 
+// Update password for an existing user with credentials.
 #[put("/a/password")]
 pub async fn update_password(update_password: Json<UpdatePasswordRequest>) -> HttpResponse {
     HttpResponse::Ok().json(update_password)
 }
 
+// Forgett password flow.
 #[post("/a/forgot-password")]
 pub async fn forgot_password(forgot_password: Json<ForgotPasswordRequest>) -> HttpResponse {
     HttpResponse::Ok().json(forgot_password)
 }
 
-#[get("/a/logout/{user_id}")]
+// Logout user.
+#[get("/a/logout")]
 pub async fn logout(path: web::Path<String>) -> HttpResponse {
     info!("{}", path);
     HttpResponse::NoContent().finish()

@@ -17,7 +17,7 @@ Rust Actix REST API application with MongoDB
 - [ ] Docker build... with minimal base image.
 - [ ] Redis cache.
 - [ ] Pagination & Sorting of get list.
-- [ ] CORS Support for API.
+- [x] CORS Support for API.
 - [x] Custom validation error. 
 
 ### Feature Todo
