@@ -31,9 +31,12 @@ pub async fn create_user(
     match is_valid {
         Ok(_) => user_service::create_user(&client, new_user).await,
         Err(err) => {
-            warn!("Error: {}", err);
+            warn!("Payload validation Error on add user: {}", err);
             // Validation error.
-            Err(ApiErrorType::BadRequest)
+            Err(ApiErrorType::ValidationError {
+                validation_error: err,
+                object: "User".to_string(),
+            })
         }
     }
 }

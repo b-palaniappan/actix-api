@@ -48,6 +48,7 @@ async fn main() -> std::io::Result<()> {
     // Config and start Actix-web server.
     HttpServer::new(move || {
         App::new()
+            // Configure CORS
             .wrap(
                 Cors::default()
                     .allowed_origin("http://127.0.0.1:8080")
@@ -61,9 +62,12 @@ async fn main() -> std::io::Result<()> {
                     ])
                     .max_age(3600),
             )
+            // configure compress middleware
             .wrap(middleware::Compress::default())
+            // configure app data
             .app_data(Data::new(client.clone()))
             .app_data(JsonConfig::default().error_handler(json_error_handler))
+            // configure controller
             .configure(api::init_user_api)
             .configure(api::init_hello_api)
             .configure(api::init_auth_api)
@@ -87,6 +91,7 @@ fn json_error_handler(err: JsonPayloadError, _req: &HttpRequest) -> Error {
             time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
             message: "Unsupported media type".to_owned(),
             debug_message: Some(detail),
+            sub_errors: Vec::new(),
         }),
         JsonPayloadError::Deserialize(json_err) if json_err.is_data() => {
             HttpResponse::UnprocessableEntity().json(ApiError {
@@ -94,6 +99,7 @@ fn json_error_handler(err: JsonPayloadError, _req: &HttpRequest) -> Error {
                 time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
                 message: "Unprocessable payload".to_owned(),
                 debug_message: Some(detail),
+                sub_errors: Vec::new(),
             })
         }
         _ => HttpResponse::BadRequest().json(ApiError {
@@ -101,6 +107,7 @@ fn json_error_handler(err: JsonPayloadError, _req: &HttpRequest) -> Error {
             time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
             message: "Bad request. Missing parameter or wrong payload.".to_owned(),
             debug_message: Some(detail),
+            sub_errors: Vec::new(),
         }),
     };
     InternalError::from_response(err, resp).into()
