@@ -14,8 +14,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Run tests
-        run: cargo test --verbose
-      - name: Build
-        run: cargo build --release --verbose
+      - name: GitHub Checkout
+        uses: actions/checkout@v3
+      - name: Cache Rust dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Tool chain setup
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: 🔎 Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+      - name: 🔨 Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release

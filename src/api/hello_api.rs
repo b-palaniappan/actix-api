@@ -16,6 +16,7 @@ pub struct Message {
     pub time_stamp: String,
 }
 
+// Demo controller for playing with Rust and Actix-Web.
 // Ping Pong controller
 #[get("/ping")]
 pub async fn ping_pong() -> impl Responder {

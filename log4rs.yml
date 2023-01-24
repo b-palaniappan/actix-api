@@ -1,3 +1,4 @@
+# Log4r configuration file.
 refresh_rate: "30 seconds"
 
 appenders:
