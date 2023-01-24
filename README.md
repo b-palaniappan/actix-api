@@ -8,8 +8,8 @@ Rust Actix REST API application with MongoDB
 - [x] Environment Config.
 - [x] Logging.
 - [x] Add JSON validator.
-- [ ] Add security may be JWT.
-- [ ] Add role based JWT.
+- [x] Add security may be JWT.
+- [x] Add role based JWT.
 - [x] Global and Local api Error Handling.
 - [ ] Form bean and Entity bean mapping.
 - [ ] Add Unit testing.
