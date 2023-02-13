@@ -129,7 +129,7 @@ fn json_error_handler(err: JsonPayloadError, _req: &HttpRequest) -> Error {
     InternalError::from_response(err, resp).into()
 }
 
-// Validator for JWT Token
+// Validator for JWT Token and extract permissions.
 async fn validator(
     req: ServiceRequest,
     credentials: BearerAuth,
