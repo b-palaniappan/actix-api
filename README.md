@@ -16,7 +16,7 @@ Rust Actix REST API application with MongoDB
 - [ ] Add integration testing.
 - [ ] Docker build... with minimal base image.
 - [ ] Redis cache.
-- [ ] Pagination & Sorting of get list.
+- [x] Pagination & Sorting of get list.
 - [x] CORS Support for API.
 - [x] Custom validation error. 
 
@@ -48,24 +48,13 @@ Rust Actix REST API application with MongoDB
 #### Paginated data response structure.
 ```json
 {
-  "message": "some message",
-  "data": [
-    {
-      "id": "rRCOeyvrlZC0o0NZmVs7L",
-      "name": "John Doe",
-      "created_at": "2023-01-20T23:43:51.459Z"
-    },
-    {
-      "id": "a1zFe085r2bh3ji5JjeYf",
-      "name": "Jane Doe",
-      "created_at": "2023-01-20T23:45:34.764Z"
-    }
-  ],
-  "offset": 1250,
-  "no_of_elements": 2,
-  "page_num": 5,
-  "page_size": 20,
-  "total_elements": 123,
-  "total_pages": 7
+  "href": "/api/users?offset=50&limit=20",
+  "next": "/api/users?offset=70&limit=20",
+  "previous": "/api/users?offset=30&limit=20",
+  "limit": 20,
+  "offset": 50,
+  "total": 74,
+  "size": 20,
+  "items": [..]
 }
 ```
