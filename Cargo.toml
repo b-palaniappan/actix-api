@@ -1,6 +1,6 @@
 [package]
 name = "actix-api"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 authors = ["Bala", "dummy@c12.io"]
 description = "Actix web API application with MongoDB backend store"
@@ -39,7 +39,7 @@ actix-cors = "0"
 
 # Utils
 futures = "0"
-chrono = "0"        # for time
+chrono = "0"        # for date and time
 dotenv = "0"        # for environment properties
 nanoid = "0"        # to generate unique ids
 derive_more = "0"
