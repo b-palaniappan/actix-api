@@ -74,7 +74,7 @@ pub async fn delete_user(
 
 #[derive(Deserialize)]
 pub struct Pagination {
-    pub skip: Option<u64>,
+    pub offset: Option<u64>,
     pub limit: Option<i64>,
 }
 

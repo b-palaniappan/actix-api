@@ -9,7 +9,6 @@ use mongodb::{
 };
 use nanoid::nanoid;
 
-use crate::api::user_api::Pagination;
 use crate::{constants, models::user_model::User};
 
 // Add a new user to Mongo DB.
@@ -77,14 +76,15 @@ pub async fn delete_user(client: &Data<Client>, id: &String) -> Result<DeleteRes
 // Fetch all users from the database
 pub async fn get_all_users(
     client: &Data<Client>,
-    pagination: &Pagination,
+    offset: u64,
+    limit: i64,
 ) -> Result<Vec<User>, Error> {
     let collection: Collection<User> = client
         .database(constants::MONGO_DATABASE)
         .collection(constants::MONGO_USER_COLLECTION);
     let find_options = FindOptions::builder()
-        .skip(pagination.skip.unwrap_or(constants::DEFAULT_SKIP_SIZE))
-        .limit(pagination.limit.unwrap_or(constants::DEFAULT_LIMIT_SIZE))
+        .skip(offset)
+        .limit(limit)
         .sort(doc! {"name": 1})
         .build();
     let mut cursors = collection.find(None, find_options).await?;
@@ -93,4 +93,11 @@ pub async fn get_all_users(
         users.push(user)
     }
     Ok(users)
+}
+
+pub async fn get_users_size(client: &Data<Client>) -> Result<u64, Error> {
+    let collection: Collection<User> = client
+        .database(constants::MONGO_DATABASE)
+        .collection(constants::MONGO_USER_COLLECTION);
+    collection.count_documents(doc! {}, None).await
 }

@@ -5,6 +5,8 @@ use mongodb::error::Error;
 use mongodb::Client;
 
 use crate::api::user_api::Pagination;
+use crate::constants;
+use crate::models::user_list_response::Users;
 use crate::{models::error_model::ApiErrorType, models::user_model::User, repository::user_repo};
 
 // add a new user to MongoDB
@@ -105,9 +107,30 @@ pub async fn get_all_users(
     client: &Data<Client>,
     pagination: &Pagination,
 ) -> Result<HttpResponse, ApiErrorType> {
-    let users = user_repo::get_all_users(client, pagination).await;
-    match users {
-        Ok(users) => Ok(HttpResponse::Ok().json(users)),
+    let offset = pagination.offset.unwrap_or(constants::DEFAULT_OFFSET_SIZE);
+    let limit = pagination.limit.unwrap_or(constants::DEFAULT_LIMIT_SIZE);
+    let user_list = user_repo::get_all_users(client, offset, limit).await;
+    let user_count = user_repo::get_users_size(client).await;
+
+    match user_list {
+        Ok(u) => {
+            // TODO: add logic to only show Next and Previous if data is available.
+            let users = Users {
+                href: format!("/api/users?offset={}&limit={}", offset, limit),
+                next: Some(format!(
+                    "/api/users?offset={}&limit={}",
+                    (offset + u64::try_from(limit).unwrap_or(0)),
+                    limit
+                )),
+                previous: None,
+                limit,
+                offset,
+                total: user_count.unwrap_or(0),
+                size: u.len(),
+                items: u,
+            };
+            Ok(HttpResponse::Ok().json(users))
+        }
         Err(err) => {
             error!("Error : {}", err);
             Err(ApiErrorType::InternalServerError)
