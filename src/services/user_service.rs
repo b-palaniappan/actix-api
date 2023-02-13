@@ -110,25 +110,39 @@ pub async fn get_all_users(
     let offset = pagination.offset.unwrap_or(constants::DEFAULT_OFFSET_SIZE);
     let limit = pagination.limit.unwrap_or(constants::DEFAULT_LIMIT_SIZE);
     let user_list = user_repo::get_all_users(client, offset, limit).await;
-    let user_count = user_repo::get_users_size(client).await;
+    let user_count = user_repo::get_users_size(client).await.unwrap_or(0);
+
+    let next_offset = i64::try_from(offset).unwrap_or(0) + limit;
+    let previous_offset = i64::try_from(offset).unwrap_or(0) - limit;
 
     match user_list {
         Ok(u) => {
             // TODO: add logic to only show Next and Previous if data is available.
-            let users = Users {
+            let mut users = Users {
                 href: format!("/api/users?offset={}&limit={}", offset, limit),
-                next: Some(format!(
-                    "/api/users?offset={}&limit={}",
-                    (offset + u64::try_from(limit).unwrap_or(0)),
-                    limit
-                )),
+                next: None,
                 previous: None,
                 limit,
                 offset,
-                total: user_count.unwrap_or(0),
+                total: user_count,
                 size: u.len(),
                 items: u,
             };
+            if next_offset < i64::try_from(user_count).unwrap_or(0) {
+                users.next = Some(format!("/api/users?offset={}&limit={}", next_offset, limit));
+            }
+
+            if offset > 0 {
+                users.previous = Some(format!(
+                    "/api/users?offset={}&limit={}",
+                    if previous_offset < 0 {
+                        0
+                    } else {
+                        previous_offset
+                    },
+                    limit
+                ));
+            }
             Ok(HttpResponse::Ok().json(users))
         }
         Err(err) => {
