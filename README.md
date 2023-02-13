@@ -23,6 +23,8 @@ Rust Actix REST API application with MongoDB
 ### Feature Todo
 - [ ] Add events (like, auth event, user event etc...) and persist in a MongoDB table.
 - [ ] Implement Kafka or Pulsar event stream. Preferably Apache pulsar.
+- [ ] Implement REST API client call using `reqwest` lib.
+- [ ] Redis Cache for frequest calls.
 
 ### Random Notes.
 
@@ -46,6 +48,7 @@ Rust Actix REST API application with MongoDB
 ```
 
 #### Paginated data response structure.
+* Sample request - `[GET] https://.../users?offset=20&limit=20`
 ```json
 {
   "href": "/api/users?offset=50&limit=20",
@@ -58,3 +61,4 @@ Rust Actix REST API application with MongoDB
   "items": [..]
 }
 ```
+

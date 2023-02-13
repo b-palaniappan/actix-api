@@ -139,7 +139,6 @@ async fn validator(
     let result = Claims::decode_jwt(credentials.token());
     match result {
         Ok(claims) => {
-            warn!("Subject - {}", claims.sub);
             req.attach(claims.permissions);
             Ok(req)
         }
