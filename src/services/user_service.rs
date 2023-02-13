@@ -4,6 +4,7 @@ use log::{error, warn};
 use mongodb::error::Error;
 use mongodb::Client;
 
+use crate::api::user_api::Pagination;
 use crate::{models::error_model::ApiErrorType, models::user_model::User, repository::user_repo};
 
 // add a new user to MongoDB
@@ -56,6 +57,7 @@ pub async fn update_user(
         location: update_user.location.to_owned(),
         title: update_user.title.to_owned(),
     };
+
     let update_result = user_repo::update_user(client, &id, data).await;
     match update_result {
         Ok(update) => {
@@ -99,8 +101,11 @@ pub async fn delete_user(
     }
 }
 
-pub async fn get_all_users(client: &Data<Client>) -> Result<HttpResponse, ApiErrorType> {
-    let users = user_repo::get_all_users(client).await;
+pub async fn get_all_users(
+    client: &Data<Client>,
+    pagination: &Pagination,
+) -> Result<HttpResponse, ApiErrorType> {
+    let users = user_repo::get_all_users(client, pagination).await;
     match users {
         Ok(users) => Ok(HttpResponse::Ok().json(users)),
         Err(err) => {

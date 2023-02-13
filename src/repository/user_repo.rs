@@ -1,5 +1,6 @@
 use actix_web::web::Data;
 use futures::TryStreamExt;
+use mongodb::options::FindOptions;
 use mongodb::{
     bson::doc,
     error::Error,
@@ -8,6 +9,7 @@ use mongodb::{
 };
 use nanoid::nanoid;
 
+use crate::api::user_api::Pagination;
 use crate::{constants, models::user_model::User};
 
 // Add a new user to Mongo DB.
@@ -73,11 +75,19 @@ pub async fn delete_user(client: &Data<Client>, id: &String) -> Result<DeleteRes
 }
 
 // Fetch all users from the database
-pub async fn get_all_users(client: &Data<Client>) -> Result<Vec<User>, Error> {
+pub async fn get_all_users(
+    client: &Data<Client>,
+    pagination: &Pagination,
+) -> Result<Vec<User>, Error> {
     let collection: Collection<User> = client
         .database(constants::MONGO_DATABASE)
         .collection(constants::MONGO_USER_COLLECTION);
-    let mut cursors = collection.find(None, None).await?;
+    let find_options = FindOptions::builder()
+        .skip(pagination.skip.unwrap_or(constants::DEFAULT_SKIP_SIZE))
+        .limit(pagination.limit.unwrap_or(constants::DEFAULT_LIMIT_SIZE))
+        .sort(doc! {"name": 1})
+        .build();
+    let mut cursors = collection.find(None, find_options).await?;
     let mut users: Vec<User> = Vec::new();
     while let Some(user) = cursors.try_next().await? {
         users.push(user)

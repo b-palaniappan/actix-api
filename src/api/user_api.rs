@@ -1,7 +1,3 @@
-use crate::{
-    models::{error_model::ApiErrorType, user_model::User},
-    services::user_service,
-};
 use actix_web::{
     delete, get, post, put, web,
     web::{Data, Json, Path},
@@ -10,7 +6,13 @@ use actix_web::{
 use actix_web_grants::proc_macro::has_any_role;
 use log::warn;
 use mongodb::Client;
+use serde::Deserialize;
 use validator::Validate;
+
+use crate::{
+    models::{error_model::ApiErrorType, user_model::User},
+    services::user_service,
+};
 
 // -- Configurations...
 pub fn init(cfg: &mut web::ServiceConfig) {
@@ -70,9 +72,18 @@ pub async fn delete_user(
     user_service::delete_user(&client, path).await
 }
 
+#[derive(Deserialize)]
+pub struct Pagination {
+    pub skip: Option<u64>,
+    pub limit: Option<i64>,
+}
+
 // Get list of all user in the database.
 #[get("/users")]
-#[has_any_role("ADMIN")]
-pub async fn get_all_users(client: Data<Client>) -> Result<HttpResponse, ApiErrorType> {
-    user_service::get_all_users(&client).await
+#[has_any_role("USER")]
+pub async fn get_all_users(
+    client: Data<Client>,
+    pagination: web::Query<Pagination>,
+) -> Result<HttpResponse, ApiErrorType> {
+    user_service::get_all_users(&client, &pagination.0).await
 }
