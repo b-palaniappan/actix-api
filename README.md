@@ -15,7 +15,6 @@ Rust Actix REST API application with MongoDB
 - [ ] Add Unit testing.
 - [ ] Add integration testing.
 - [ ] Docker build... with minimal base image.
-- [ ] Redis cache.
 - [x] Pagination & Sorting of get list.
 - [x] CORS Support for API.
 - [x] Custom validation error. 
