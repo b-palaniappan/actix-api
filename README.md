@@ -1,6 +1,6 @@
 # actix-api
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/b-palaniappan/actix-api?include_prereleases)
-![Packagist License](https://img.shields.io/packagist/l/b-palaniappan/actix-api)
+![GitHub](https://img.shields.io/github/license/b-palaniappan/actix-api)
 
 Rust Actix REST API application with MongoDB
 
