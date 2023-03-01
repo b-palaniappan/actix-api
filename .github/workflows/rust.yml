@@ -41,5 +41,5 @@ jobs:
         uses: scaffoldly/bump-version-action@main
         with:
           action: postrelease
-          version-file: Cargo.toml
+          version-file: version.json
           repo-token: ${{ secrets.GITHUB_TOKEN }}
