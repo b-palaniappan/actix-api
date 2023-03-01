@@ -44,3 +44,6 @@ dotenv = "0"        # for environment properties
 nanoid = "0"        # to generate unique ids
 derive_more = "0"
 
+# Redis cache
+redis = { version = "0", features = ["tokio-comp"]}
+

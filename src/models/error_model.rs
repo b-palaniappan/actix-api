@@ -19,6 +19,7 @@ pub enum ApiErrorType {
     #[display(fmt = "Authentication error.")]
     AuthenticationError,
 
+    // Figure out a way to use this when JWT does not have authorization.
     #[display(fmt = "Authorization error.")]
     AuthorizationError,
 

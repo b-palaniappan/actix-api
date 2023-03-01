@@ -121,7 +121,7 @@ fn json_error_handler(err: JsonPayloadError, _req: &HttpRequest) -> Error {
         _ => HttpResponse::BadRequest().json(ApiError {
             status: 400,
             time: Utc::now().to_rfc3339_opts(SecondsFormat::Micros, true),
-            message: "Bad request. Missing parameter or wrong payload.".to_owned(),
+            message: "Bad request. Missing parameter and / or wrong payload.".to_owned(),
             debug_message: Some(detail),
             sub_errors: Vec::new(),
         }),

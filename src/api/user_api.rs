@@ -78,7 +78,7 @@ pub struct Pagination {
     pub limit: Option<i64>,
 }
 
-// Get list of all user in the database.
+// Get list of all users in the database and handle pagination.
 #[get("/users")]
 #[has_any_role("USER")]
 pub async fn get_all_users(
