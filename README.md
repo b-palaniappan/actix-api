@@ -1,6 +1,9 @@
 # actix-api
-![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/b-palaniappan/actix-api?include_prereleases)
 ![GitHub](https://img.shields.io/github/license/b-palaniappan/actix-api)
+![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/b-palaniappan/actix-api?include_prereleases)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/b-palaniappan/actix-api/rust.yml)
+![GitHub top language](https://img.shields.io/github/languages/top/b-palaniappan/actix-api)
+![GitHub last commit](https://img.shields.io/github/last-commit/b-palaniappan/actix-api)
 
 Rust Actix REST API application with MongoDB
 
