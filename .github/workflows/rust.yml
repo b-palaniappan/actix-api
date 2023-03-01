@@ -38,12 +38,8 @@ jobs:
           command: build
           args: --release
       - name: Semver tag and release
-        uses: 1k-off/action-semver-tag-release@1.0.3
-        id: tag
+        uses: scaffoldly/bump-version-action@main
         with:
-          version: latest
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          release_tag: patch
-          create_release: true
-          assets: |
-            target/release/actix-api
+          action: postrelease
+          version-file: cargo.toml
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
