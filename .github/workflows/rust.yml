@@ -37,9 +37,19 @@ jobs:
         with:
           command: build
           args: --release
-      - name: Semver tag and release
-        uses: scaffoldly/bump-version-action@main
+#      - name: Semver tag and release
+#        uses: scaffoldly/bump-version-action@main
+#        with:
+#          action: postrelease
+#          version-file: version.json
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: 1k-off/action-semver-tag-release@1.0.1
+        id: tag
         with:
-          action: postrelease
-          version-file: version.json
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          version: latest
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_tag: patch
+          pre_release_tag: ""
+          create_release: true
+          assets: |
+            target/release/actix-api
