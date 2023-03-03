@@ -47,3 +47,5 @@ derive_more = "0"
 # Redis cache
 redis = { version = "0", features = ["tokio-comp"]}
 
+# Reqwest to call external API
+reqwest = { version = "0", features = ["json"]}
