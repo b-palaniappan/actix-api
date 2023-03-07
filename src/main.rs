@@ -81,6 +81,7 @@ async fn main() -> std::io::Result<()> {
             // Configure un-secure controller
             .configure(api::init_auth_api)
             .configure(api::init_ping_api)
+            .configure(api::init_location_api)
             // Configure secure controller with prefix '/api'
             .service(
                 web::scope("/api")
