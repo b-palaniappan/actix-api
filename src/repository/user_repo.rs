@@ -10,6 +10,7 @@ use mongodb::{
 use nanoid::nanoid;
 
 use crate::{constants, models::user_model::User};
+use crate::models::user_list_response::Users;
 
 // Add a new user to Mongo DB.
 pub async fn create_user(client: &Data<Client>, new_user: User) -> Result<Option<User>, Error> {
@@ -78,7 +79,7 @@ pub async fn get_all_users(
     client: &Data<Client>,
     offset: u64,
     limit: i64,
-) -> Result<Vec<User>, Error> {
+) -> Result<Vec<Users>, Error> {
     let collection: Collection<User> = client
         .database(constants::MONGO_DATABASE)
         .collection(constants::MONGO_USER_COLLECTION);
@@ -88,9 +89,14 @@ pub async fn get_all_users(
         .sort(doc! {"name": 1})
         .build();
     let mut cursors = collection.find(None, find_options).await?;
-    let mut users: Vec<User> = Vec::new();
+    let mut users: Vec<Users> = Vec::new();
     while let Some(user) = cursors.try_next().await? {
-        users.push(user)
+        users.push(Users {
+            id: user.id.unwrap_or("".to_string()),
+            name: user.name,
+            location: user.location,
+            title: user.title,
+        })
     }
     Ok(users)
 }

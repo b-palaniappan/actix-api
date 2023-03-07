@@ -28,7 +28,7 @@ Rust Actix REST API application with MongoDB
 - [ ] Add events (like, auth event, user event etc...) and persist in a MongoDB table.
 - [ ] Implement Kafka or Pulsar event stream. Preferably Apache pulsar.
 - [ ] Implement REST API client call using `reqwest` lib.
-- [ ] Redis Cache for frequest calls.
+- [ ] Redis Cache for frequent calls.
 
 ### Random Notes.
 
@@ -52,17 +52,45 @@ Rust Actix REST API application with MongoDB
 ```
 
 #### Paginated data response structure.
-* Sample request - `[GET] https://.../users?offset=20&limit=20`
+* Sample request - `[GET] https://.../users?offset=20&limit=20&sort_by=name`
+* Sample response with three elements - `data`, `meta` and `_links`.
 ```json
 {
-  "href": "/api/users?offset=50&limit=20",
-  "next": "/api/users?offset=70&limit=20",
-  "previous": "/api/users?offset=30&limit=20",
-  "limit": 20,
-  "offset": 50,
-  "total": 74,
-  "size": 20,
-  "items": [..]
+  "data": [{
+    "id": "usr_DwgQxN3gLRX1p0g7bwny1",
+    "userName": "john_doe",
+    "firstName": "john",
+    "lastName": "Doe",
+    "email": "john_doe@c12.io"
+  },
+    {...}
+  ],
+  "meta": {
+    "current_page": 1,
+    "page_size": 20,
+    "page_count": 12,
+    "total_results": 348,
+    "search_id": "VE4heV3F5m2Vf0GO_dLhu",
+    "search_criteria": "",
+    "sort_by": "lastName"
+  },
+  "_link": {
+    "self": {
+      "href": "/v1/users?limt=20&offset=40"
+    },
+    "previous": {
+      "href": "/v1/users?limit=20&offset=20"
+    },
+    "first": {
+      "href": "/v1/users?limit=20&offset=0"
+    },
+    "next": {
+      "href": "/v1/users?limit=20&offset=60"
+    },
+    "last": {
+      "href": "/v1/users?limit=20&offset=120"
+    }
+  }
 }
 ```
 

@@ -1,13 +1,13 @@
-use actix_web::web::{Data, Json, Path};
 use actix_web::HttpResponse;
+use actix_web::web::{Data, Json, Path};
 use log::{error, warn};
-use mongodb::error::Error;
 use mongodb::Client;
+use mongodb::error::Error;
 
+use crate::{models::error_model::ApiErrorType, models::user_model::User, repository::user_repo};
 use crate::api::user_api::Pagination;
 use crate::constants;
-use crate::models::user_list_response::Users;
-use crate::{models::error_model::ApiErrorType, models::user_model::User, repository::user_repo};
+use crate::models::user_list_response::{Link, LinkHref, Meta, UserListResponse};
 
 // add a new user to MongoDB
 pub async fn create_user(
@@ -111,39 +111,31 @@ pub async fn get_all_users(
     let limit = pagination.limit.unwrap_or(constants::DEFAULT_LIMIT_SIZE);
     let user_list = user_repo::get_all_users(client, offset, limit).await;
     let user_count = user_repo::get_users_size(client).await.unwrap_or(0);
+    let last_offset = (user_count / (limit as u64)) * limit as u64;
 
     let next_offset = i64::try_from(offset).unwrap_or(0) + limit;
     let previous_offset = i64::try_from(offset).unwrap_or(0) - limit;
 
     match user_list {
         Ok(u) => {
-            // TODO: add logic to only show Next and Previous if data is available.
-            let mut users = Users {
-                href: format!("/api/users?offset={}&limit={}", offset, limit),
-                next: None,
-                previous: None,
-                limit,
-                offset,
-                total: user_count,
-                size: u.len(),
-                items: u,
+            let response = UserListResponse {
+                data: u,
+                meta: Meta {
+                    offset,
+                    limit,
+                    total_results: user_count,
+                    search_criteria: None,
+                    sort_by: None,
+                },
+                _link: Link {
+                    first: LinkHref { href: format!("/api/users?offset={}&limit={}", 0, limit).to_string() },
+                    last: LinkHref { href: format!("/api/users?offset={}&limit={}", last_offset, limit).to_string() },
+                    previous: if previous_offset < 0 { None } else { Some(LinkHref { href: format!("/api/users?offset={}&limit={}", previous_offset, limit).to_string() }) },
+                    next: if (next_offset as u64) > last_offset { None } else { Some(LinkHref { href: format!("/api/users?offset={}&limit={}", next_offset, limit).to_string() }) },
+                    self_link: LinkHref { href: format!("/api/users?offset={}&limit={}", offset, limit).to_string() },
+                },
             };
-            if next_offset < i64::try_from(user_count).unwrap_or(0) {
-                users.next = Some(format!("/api/users?offset={}&limit={}", next_offset, limit));
-            }
-
-            if offset > 0 {
-                users.previous = Some(format!(
-                    "/api/users?offset={}&limit={}",
-                    if previous_offset < 0 {
-                        0
-                    } else {
-                        previous_offset
-                    },
-                    limit
-                ));
-            }
-            Ok(HttpResponse::Ok().json(users))
+            Ok(HttpResponse::Ok().json(response))
         }
         Err(err) => {
             error!("Error : {}", err);

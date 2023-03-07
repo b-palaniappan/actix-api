@@ -26,6 +26,7 @@ mod constants;
 mod models;
 mod repository;
 mod services;
+mod handler;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -72,7 +73,7 @@ async fn main() -> std::io::Result<()> {
                     ])
                     .max_age(3600),
             )
-            // configure compress middleware
+            // configure compress handler
             .wrap(middleware::Compress::default())
             // configure app data
             .app_data(Data::new(client.clone()))
@@ -89,7 +90,7 @@ async fn main() -> std::io::Result<()> {
             )
             // configure controller
             .wrap(middleware::DefaultHeaders::new().add(("X-Version", "0.3.0")))
-            // enable logger - always register actix-web Logger middleware last
+            // enable logger - always register actix-web Logger handler last
             .wrap(middleware::Logger::default())
     })
     .bind((server_host, server_port))
