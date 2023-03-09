@@ -16,7 +16,7 @@ Rust Actix REST API application with MongoDB
 - [x] Add security may be JWT.
 - [x] Add role based JWT.
 - [x] Global and Local api Error Handling.
-- [ ] Form bean and Entity bean mapping.
+- [x] Form bean and Entity bean mapping.
 - [ ] Add Unit testing.
 - [ ] Add integration testing.
 - [ ] Docker build... with minimal base image.
