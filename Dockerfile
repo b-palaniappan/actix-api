@@ -5,7 +5,7 @@ FROM rust:slim AS builder
 
 # install dependencies
 RUN rustup target add x86_64-unknown-linux-musl \
-    && apt-get update && apt-get install -y musl-tools musl-dev libssl-dev \
+    && apt-get update && apt-get install -y musl-tools musl-dev libssl-dev pkg-config \
     && update-ca-certificates
 
 # Create appuser
