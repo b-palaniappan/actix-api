@@ -11,7 +11,7 @@ use actix_web_grants::permissions::AttachPermissions;
 use actix_web_httpauth::extractors::bearer::BearerAuth;
 use actix_web_httpauth::middleware::HttpAuthentication;
 use chrono::{SecondsFormat, Utc};
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use log::{info, warn};
 
 use models::error_model::ApiError;
