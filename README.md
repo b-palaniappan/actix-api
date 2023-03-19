@@ -30,6 +30,16 @@ Rust Actix REST API application with MongoDB
 - [ ] Implement REST API client call using `reqwest` lib.
 - [ ] Redis Cache for frequent calls.
 
+### Tools and IDE
+- MscBookPro M1
+- Rustup for managing `rustc` and plugins
+- IDE used are `Intellij IDEA` and [Helix Editor](https://helix-editor.com/). Helix editor is developed using Rust 🦀.
+- Use [Colima](https://github.com/abiosoft/colima). Its a light weight cli alternative to docker desktop.
+- Use [Starship](https://github.com/starship/starship) for shell with fish shell. Another tool developed using Rust 🦀.
+
+### Similar Project
+- Working on similar project with `axum` and `sqlx`, the srouce code is [here](https://github.com/b-palaniappan/axum-api)
+
 ### Random Notes.
 
 #### Api Error response structure.
