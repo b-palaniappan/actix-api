@@ -41,7 +41,7 @@ jobs:
         with:
           version: latest
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          release_tag: patch
+          release_tag: minor
           pre_release_tag: ""
           create_release: true
           assets: |
