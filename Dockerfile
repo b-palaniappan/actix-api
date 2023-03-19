@@ -1,47 +1,28 @@
 ####################################################################################################
 ## Builder
 ####################################################################################################
-FROM rust:slim AS builder
 
-# install dependencies
-RUN rustup target add x86_64-unknown-linux-musl \
-    && apt-get update && apt-get install -y musl-tools musl-dev libssl-dev pkg-config \
-    && update-ca-certificates
-
-# Create appuser
-ENV USER=webapp
-ENV UID=10001
-
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    "${USER}"
-
-WORKDIR /actix-api
-
-COPY ./ .
-
-RUN cargo build --target x86_64-unknown-linux-musl --release
+# Start with a rust alpine image
+FROM rust:alpine as builder
+# This is important, see https://github.com/rust-lang/docker-rust/issues/85
+ENV RUSTFLAGS="-C target-feature=-crt-static"
+# if needed, add additional dependencies here
+RUN apk add --no-cache musl-dev
+# set the workdir and copy the source into it
+WORKDIR /app
+COPY ./ /app
+# do a release build
+RUN cargo build --release
 
 ####################################################################################################
 ## Final image
 ####################################################################################################
-FROM scratch
-
-# Import from builder.
-COPY --from=builder /etc/passwd /etc/passwd
-COPY --from=builder /etc/group /etc/group
-
-WORKDIR /actix-api
-
-# Copy our build
-COPY --from=builder /actix-api/target/x86_64-unknown-linux-musl/release/actix-api ./
-
-# Use an unprivileged user.
-USER webapp:webapp
-
-CMD ["/actix-api/actix-api"]
+# use a plain alpine image, the alpine version needs to match the builder
+FROM alpine
+# if needed, install additional dependencies here
+RUN apk add --no-cache libgcc
+# copy the binary into the final image
+COPY --from=builder /app/target/release/actix-api .
+COPY --from=builder /app/.env .
+# set the binary as entrypoint
+ENTRYPOINT ["/actix-api"]

@@ -10,6 +10,15 @@ keywords = ["API", "actix-web", "mongodb"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+# to Reduce the size of release binary.
+# Reduced from 22M to 6.8M (more than 1/3 the original size)
+[profile.release]
+strip = true  # Automatically strip symbols from the binary.
+opt-level = "z"  # Optimize for size.
+lto = true
+codegen-units = 1
+panic = "abort"
+
 [dependencies]
 # actix core web
 actix-web = "4"
