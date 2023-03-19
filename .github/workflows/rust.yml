@@ -45,7 +45,7 @@ jobs:
           pre_release_tag: ""
           create_release: true
           assets: |
-            target/release/actix-api
+            target/debug/actix-api
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Build docker image
