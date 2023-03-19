@@ -52,7 +52,6 @@ chrono = "0"        # for date and time
 dotenvy = "0"       # for environment properties
 nanoid = "0"        # to generate unique ids
 derive_more = "0"
-openssl = { version = "0", features = ["vendored"] }
 
 # REST Clinet calls.
 reqwest = { version = "0.11", features = ["json"] }

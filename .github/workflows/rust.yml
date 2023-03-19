@@ -36,7 +36,6 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release
       - uses: 1k-off/action-semver-tag-release@1.0.1
         id: tag
         with:

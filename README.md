@@ -36,6 +36,7 @@ Rust Actix REST API application with MongoDB
 - IDE used are `Intellij IDEA` and [Helix Editor](https://helix-editor.com/). Helix editor is developed using Rust 🦀.
 - Use [Colima](https://github.com/abiosoft/colima). Its a light weight cli alternative to docker desktop.
 - Use [Starship](https://github.com/starship/starship) for shell with fish shell. Another tool developed using Rust 🦀.
+- Terminal tool using is `Alacritty` with `tmux`. `Alacritty` is another rust based 🦀.3
 
 ### Similar Project
 - Working on similar project with `axum` and `sqlx`, the srouce code is [here](https://github.com/b-palaniappan/axum-api)
