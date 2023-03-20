@@ -21,37 +21,37 @@ panic = "abort"
 
 [dependencies]
 # actix core web
-actix-web = "4"
+actix-web = { features = ["compress-brotli"], default-features = false, version = "4" }
 
 # logging
 log = "0"
-log4rs = "1"
+log4rs = { features = ["config_parsing"], default-features = false, version = "1" }
 
 # mongodb driver
 mongodb = "2"
-bson = { version = "2", features = ["chrono-0_4"]}
+bson = { version = "2", features = ["chrono-0_4"], default-features = false }
 
 # JSON Seralizer
-serde = { version = "1", features = ["derive"] }
+serde = { version = "1", default-features = false }
 
 # User authenttication and authorization
-jsonwebtoken = "8"
+jsonwebtoken = { default-features = false, version = "8" }
 actix-web-grants = "3"
 actix-web-httpauth = "0"
 rust-argon2 = "1"
 
 # request validation
-validator = { version = "0", features = ["derive"] }
+validator = { version = "0", features = ["derive"], default-features = false }
 
 # CORS
 actix-cors = "0"
 
 # Utils
-futures = "0"
-chrono = "0"        # for date and time
+futures = { default-features = false, version = "0" }
+chrono = { default-features = false, version = "0" }
 dotenvy = "0"       # for environment properties
 nanoid = "0"        # to generate unique ids
-derive_more = "0"
+derive_more = { default-features = false, version = "0" }
 
 # REST Clinet calls.
-reqwest = { version = "0.11", features = ["json"] }
+reqwest = { version = "0.11", features = ["json"], default-features = false }

@@ -7,6 +7,11 @@
 
 Rust Actix REST API application with MongoDB
 
+### Minimize Binary size
+- To minimize the size of binaries, I followed - [article](https://github.com/johnthagen/min-sized-rust). It help me reduce the final binary size from 22M to 6.8M
+- Also used [cargo-unused-features](https://github.com/TimonPost/cargo-unused-features) to cleanup unused features. This helped me reduce from 6.8M to 5.3M.
+  - Run `unused-features analyze` followed by `unused-features prune --input report.json`. More info in the github link above.
+
 ### Todo
 
 - [x] Basic CRUD calls using MongoDB.
