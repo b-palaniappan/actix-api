@@ -25,7 +25,7 @@ actix-web = { features = ["compress-brotli"], default-features = false, version 
 
 # logging
 log = "0"
-log4rs = { features = ["config_parsing"], default-features = false, version = "1" }
+log4rs = { features = ["config_parsing", "serde_yaml", "yaml_format", "console_appender", "file_appender"], default-features = false, version = "1" }
 
 # mongodb driver
 mongodb = "2"

@@ -19,10 +19,12 @@ RUN cargo build --release
 ####################################################################################################
 # use a plain alpine image, the alpine version needs to match the builder
 FROM alpine
-# if needed, install additional dependencies here
-RUN apk add --no-cache libgcc
+# if needed, install additional dependencies here and Create a group and user which is non-root.
+RUN apk update && apk add --no-cache libgcc && addgroup -S appgroup && adduser -S appuser -G appgroup && mkdir /app && chown -R appuser:appgroup /app
+# Change to appuser and set work directory
+USER appuser
+WORKDIR /app
 # copy the binary into the final image
-COPY --from=builder /app/target/release/actix-api /app/.env /app/log4rs.yml ./
-COPY --from=builder /app/.env .
+COPY --chown=appuser:appgroup --from=builder /app/target/release/actix-api /app/.env /app/log4rs.yml ./
 # set the binary as entrypoint
-ENTRYPOINT ["/actix-api"]
+ENTRYPOINT ["/app/actix-api"]
