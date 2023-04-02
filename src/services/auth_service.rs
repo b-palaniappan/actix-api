@@ -5,6 +5,7 @@ use chrono::Utc;
 use log::{error, warn};
 use mongodb::Client;
 use nanoid::nanoid;
+use rand::{Rng, thread_rng};
 
 use crate::auth::claims::Claims;
 use crate::{
@@ -19,7 +20,9 @@ pub async fn create_user(
     register_user: RegisterRequest,
 ) -> Result<HttpResponse, ApiErrorType> {
     // Step 1: Hash password with argon2.
-    let salt = b"radomSalt";
+    // Generate a random 16-byte salt using the rand crate
+    let mut rng = thread_rng();
+    let salt: [u8; 16] = rng.gen();
     let config = Config {
         variant: Variant::Argon2id,
         version: Version::Version13,
@@ -31,7 +34,7 @@ pub async fn create_user(
         ad: &[],
         hash_length: 64,
     };
-    let hash = argon2::hash_encoded(register_user.password.as_bytes(), salt, &config);
+    let hash = argon2::hash_encoded(register_user.password.as_bytes(), &salt, &config);
 
     // Step 2: Verify user email does not already exists.
     if auth_repo::check_email(client, &register_user.email).await {

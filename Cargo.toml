@@ -39,6 +39,7 @@ jsonwebtoken = { default-features = false, version = "8" }
 actix-web-grants = "3"
 actix-web-httpauth = "0"
 rust-argon2 = "1"
+rand = "0"
 
 # request validation
 validator = { version = "0", features = ["derive"], default-features = false }

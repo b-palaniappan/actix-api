@@ -20,6 +20,7 @@ dependencies = [
  "log4rs",
  "mongodb",
  "nanoid",
+ "rand",
  "reqwest",
  "rust-argon2",
  "serde",
