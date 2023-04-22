@@ -23,10 +23,10 @@ mod api;
 mod auth;
 mod config;
 mod constants;
+mod handler;
 mod models;
 mod repository;
 mod services;
-mod handler;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

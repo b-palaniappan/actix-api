@@ -5,7 +5,7 @@ use chrono::Utc;
 use log::{error, warn};
 use mongodb::Client;
 use nanoid::nanoid;
-use rand::{Rng, thread_rng};
+use rand::{thread_rng, Rng};
 
 use crate::auth::claims::Claims;
 use crate::{

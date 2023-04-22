@@ -1,13 +1,13 @@
-use actix_web::HttpResponse;
 use actix_web::web::{Data, Json, Path};
+use actix_web::HttpResponse;
 use log::{error, warn};
-use mongodb::Client;
 use mongodb::error::Error;
+use mongodb::Client;
 
-use crate::{models::error_model::ApiErrorType, models::user_model::User, repository::user_repo};
 use crate::api::user_api::Pagination;
 use crate::constants;
 use crate::models::user_list_response::{Link, LinkHref, Meta, UserListResponse};
+use crate::{models::error_model::ApiErrorType, models::user_model::User, repository::user_repo};
 
 // add a new user to MongoDB
 pub async fn create_user(
@@ -128,11 +128,32 @@ pub async fn get_all_users(
                     sort_by: None,
                 },
                 _link: Link {
-                    first: LinkHref { href: format!("/api/users?offset={}&limit={}", 0, limit).to_string() },
-                    last: LinkHref { href: format!("/api/users?offset={}&limit={}", last_offset, limit).to_string() },
-                    previous: if previous_offset < 0 { None } else { Some(LinkHref { href: format!("/api/users?offset={}&limit={}", previous_offset, limit).to_string() }) },
-                    next: if (next_offset as u64) > last_offset { None } else { Some(LinkHref { href: format!("/api/users?offset={}&limit={}", next_offset, limit).to_string() }) },
-                    self_link: LinkHref { href: format!("/api/users?offset={}&limit={}", offset, limit).to_string() },
+                    first: LinkHref {
+                        href: format!("/api/users?offset={}&limit={}", 0, limit).to_string(),
+                    },
+                    last: LinkHref {
+                        href: format!("/api/users?offset={}&limit={}", last_offset, limit)
+                            .to_string(),
+                    },
+                    previous: if previous_offset < 0 {
+                        None
+                    } else {
+                        Some(LinkHref {
+                            href: format!("/api/users?offset={}&limit={}", previous_offset, limit)
+                                .to_string(),
+                        })
+                    },
+                    next: if (next_offset as u64) > last_offset {
+                        None
+                    } else {
+                        Some(LinkHref {
+                            href: format!("/api/users?offset={}&limit={}", next_offset, limit)
+                                .to_string(),
+                        })
+                    },
+                    self_link: LinkHref {
+                        href: format!("/api/users?offset={}&limit={}", offset, limit).to_string(),
+                    },
                 },
             };
             Ok(HttpResponse::Ok().json(response))

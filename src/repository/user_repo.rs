@@ -9,8 +9,8 @@ use mongodb::{
 };
 use nanoid::nanoid;
 
-use crate::{constants, models::user_model::User};
 use crate::models::user_list_response::Users;
+use crate::{constants, models::user_model::User};
 
 // Add a new user to Mongo DB.
 pub async fn create_user(client: &Data<Client>, new_user: User) -> Result<Option<User>, Error> {
