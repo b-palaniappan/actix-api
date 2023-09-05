@@ -1,6 +1,6 @@
 use actix_web::web::Data;
 use actix_web::HttpResponse;
-use argon2::{Config, ThreadMode, Variant, Version};
+use argon2::{Config, Variant, Version};
 use chrono::Utc;
 use log::{error, warn};
 use mongodb::Client;
@@ -29,7 +29,6 @@ pub async fn create_user(
         mem_cost: 65536,
         time_cost: 10,
         lanes: 4,
-        thread_mode: ThreadMode::Parallel,
         secret: &[],
         ad: &[],
         hash_length: 64,
