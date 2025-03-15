@@ -5,7 +5,7 @@ use chrono::Utc;
 use log::{error, warn};
 use mongodb::Client;
 use nanoid::nanoid;
-use rand::{thread_rng, Rng};
+use rand::Rng;
 
 use crate::auth::claims::Claims;
 use crate::{
@@ -21,8 +21,8 @@ pub async fn create_user(
 ) -> Result<HttpResponse, ApiErrorType> {
     // Step 1: Hash password with argon2.
     // Generate a random 16-byte salt using the rand crate
-    let mut rng = thread_rng();
-    let salt: [u8; 16] = rng.gen();
+    let mut rng = rand::rng();
+    let salt: [u8; 16] = rng.random();
     let config = Config {
         variant: Variant::Argon2id,
         version: Version::Version13,

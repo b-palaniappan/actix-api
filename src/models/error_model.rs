@@ -103,7 +103,7 @@ impl ResponseError for ApiErrorType {
                     for field_error in field_errors {
                         validation_sub_errs.push(ValidationError {
                             object: object.to_string(),
-                            field: field.to_owned(),
+                            field: field.to_string(),
                             rejected_value: field_error.params.get("value").unwrap().to_string(),
                             message: field_error.message.as_ref().unwrap().to_string(),
                         })
